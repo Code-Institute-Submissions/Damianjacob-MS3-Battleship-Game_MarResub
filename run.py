@@ -31,7 +31,7 @@ class Board:
         Converts the column letter to a number based on the letter's index in the first list of the board list
         """
         col_num = self.board[0].index(col.upper())
-        self.board[row][col_num] = "@"
+        self.board[int(row)][col_num] = "@"
 
     def place_ships_randomly(self):
         """
@@ -54,21 +54,20 @@ class Board:
         return coordinate_list
 
 
-player_name = input(
-    "Hello and welcome to this game of battleship! Please enter your name: "
-)
-player_board = Board(player_name)
+# player_name = input(
+#     "Hello and welcome to this game of battleship! Please enter your name: "
+# )
+player_board = Board("damian")
 computer_board = Board("Computer")
 
-player_coordinates = input(
-    "Please insert the coordinates where you want to place your ship. You have 5 ships in total. The coordinates should be the column letter and the row number, separated by a comma (like this: A, 1): "
-)
 
-print(player_coordinates)
-type(player_coordinates)
+for x in range(5):
+    player_coordinates = input(
+        "Please insert the coordinates where you want to place your ship. You have 5 ships in total. The coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
+    )
+    a, b = player_coordinates.split()
+    player_board.place_ships(a, b)
+    player_board.display_board()
 
-player_board.place_ships("d", 3)
-
-player_board.display_board()
 computer_board.place_ships_randomly()
 computer_board.display_board()
