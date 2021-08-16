@@ -57,17 +57,28 @@ class Board:
 # player_name = input(
 #     "Hello and welcome to this game of battleship! Please enter your name: "
 # )
-player_board = Board("damian")
+player_board = Board("player")
 computer_board = Board("Computer")
 
+player_board.display_board()
 
-for x in range(5):
+i = 0
+while i < 5:
     player_coordinates = input(
-        "Please insert the coordinates where you want to place your ship. You have 5 ships in total. The coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
+        f"Please insert the coordinates where you want to place ship number {i + 1}. You have 5 ships in total. \nThe coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
     )
-    a, b = player_coordinates.split()
-    player_board.place_ships(a, b)
-    player_board.display_board()
+    try:
+        a, b = player_coordinates.split()
+        player_board.place_ships(a, b)
+    except ValueError:
+        print(
+            "Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!"
+        )
+    else:
+        a, b = player_coordinates.split()
+        player_board.place_ships(a, b)
+        i += 1
+        player_board.display_board()
 
 computer_board.place_ships_randomly()
 computer_board.display_board()
