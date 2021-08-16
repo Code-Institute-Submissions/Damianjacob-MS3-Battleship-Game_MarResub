@@ -23,7 +23,7 @@ class Board:
         """
         print(f"{self.name}'s board")
         for row in self.board:
-            joint_row = "  ".join(row)
+            joint_row = "   ".join(row)
             print(f"{joint_row}\n")
 
     def place_ships(self, col, row):
@@ -54,10 +54,29 @@ class Board:
         return coordinate_list
 
 
-# player_name = input(
-#     "Hello and welcome to this game of battleship! Please enter your name: "
-# )
-player_board = Board("player")
+title = [
+    [" *", "-", "-", "-", "-", "-", "*", "-", "-", "-", "-", "*"],
+    [" ", " B", "A", "T", "T", "L", "E", "S", "H", "I", "P", " "],
+    [" *", "-", "-", "-", "-", "-", "*", "-", "-", "-", "-", "*"],
+]
+
+instructions = """Hello and welcome to this game of battleship! \nLet me explain how it works: You will have to face the computer in this strategic naval game, and each of you will try to sink each other's fleet.
+You each have 5 ships, placed strategically on your board. Only you can see your ships, and you cannot see the computer's ships. 
+The same is true the other way around: The computer can only see their own ships, 
+but not yours. 
+
+First, you will have to enter your name, then you have to place your own ships by entering coordinates. Place your ships wisely!
+Once your ships are placed, you and the computer will take turns to shoot at coordinates of each other's boards. Whoever manages to sink the enemy fleet first, wins!
+If you miss, a "o" will appear on your enemies board, and when you hit an enemy ship an "x" will appear. You can't shoot the same coordinates twice! Good luck!
+"""
+
+for row in title:
+    print(" ".join(row) + "\n")
+
+print(instructions)
+
+player_name = input("Please enter your name: ")
+player_board = Board(f"{player_name}\n")
 computer_board = Board("Computer")
 
 player_board.display_board()
