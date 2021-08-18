@@ -81,6 +81,15 @@ class Board:
             print("It's a hit!")
             self.board[int(row)][col_num] = "x"
             coor_list.remove(coords)
+            self.ship_count -= 1
+            if self.ship_count > 1:
+                print(
+                    f"Well done, it's a hit! We need to sink {self.ship_count} more ships to destroy the enemy's fleet"
+                )
+            else:
+                print(
+                    f"Well done, it's a hit! We only need to sink one more ship to destroy the enemy's fleet!"
+                )
         else:
             print("It's a miss...")
             self.board[int(row)][col_num] = "o"
@@ -88,8 +97,8 @@ class Board:
 
     def guess_player_ships(self):
         """
-        Takes col and row, checks which character is at those coordinates.
-        if the character is x or o, it does nothing but the function should start
+        The loop generates a random coordinate and checks which character is at that coordinate.
+        if the character is x or o, it does nothing but the loop will start
         over again. If there is an @ it transforms it into an x and detracts one point
         from the ship count.
         """
@@ -105,9 +114,14 @@ class Board:
                 coordinate = "x"
                 self.ship_count -= 1
                 already_hit = True
-                print(
-                    f"\nCaptain! The enemy has sunken one of our ships! We still have {self.ship_count} ships in our fleet."
-                )
+                if self.ship_count > 1:
+                    print(
+                        f"\n{player_name}! The enemy has sunken one of our ships! We still have {self.ship_count} ships in our fleet."
+                    )
+                else:
+                    print(
+                        f"\n{player_name}! The enemy has sunken one of our ships! We only have {self.ship_count} ship left..."
+                    )
             else:
                 coordinate = "o"
                 already_hit = True
@@ -147,10 +161,16 @@ def player_turn():
                 player_board.display_board()
                 computer_board.display_board()
                 flag = False
+                print(flag)
+                break
             except ValueError:
                 print(
                     "\nAttention! Your coordinates should be a letter from A to E and a number from 1 to 5, separated by a space. The letter should come before the number.\n"
                 )
+
+
+def computer_turn():
+    computer_board.guess_player_ships()
 
 
 title = [
@@ -213,3 +233,15 @@ while ships_placed == False:
         print("Input not valid")
 
 computer_board.display_board()
+
+coin_flip = random.randrange(1, 3)
+if coin_flip == 1:
+    print("You won the coin flip! You start. Good luck!")
+    while computer_board.ship_count > 0 and player_board.ship_count > 0:
+        player_turn()
+        computer_turn()
+else:
+    print("Your enemy won the coin flip! You start second. Good luck!")
+    while computer_board.ship_count > 0 and player_board.ship_count > 0:
+        computer_turn()
+        player_turn()
