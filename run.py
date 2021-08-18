@@ -17,23 +17,32 @@ class Board:
             ["5", "~", "~", "~", "~", "~"],
         ]
 
+    def column_number(self, col):
+        """
+        Converts a letter from a to e to a number based on the letter's index in the first nested list inside the board list
+        """
+        return self.board[0].index(col.upper())
+
     def display_board(self):
         """
         Prints the board and the name of its player to the terminal.
         """
-        print(f"{self.name}'s board")
+        print(f"\n   {self.name}'s board:\n")
         for row in self.board:
             joint_row = "   ".join(row)
             print(f"{joint_row}\n")
 
     def place_ships(self, col, row):
         """
-        Converts the column letter to a number based on the letter's index in the first list of the board list
+        Places ships (represented by "@") at the coordinates specified by the player
         """
-        col_num = self.board[0].index(col.upper())
+        if type(col) is str:
+            col_num = self.column_number(col)
+        else:
+            col_num = col
         self.board[int(row)][col_num] = "@"
 
-    def place_ships_randomly(self):
+    def create_five_random_coordinates(self):
         """
         Creates 5 random coordinates without duplicates and returns them in a list of lists.
         """
@@ -44,7 +53,7 @@ class Board:
         while x < 5:
             rand_col = random.choice(col_list)
             rand_row = random.choice(row_list)
-            col_num = self.board[0].index(rand_col.upper())
+            col_num = self.column_number(rand_col)
             rand_coordinates = [rand_row, col_num]
             if rand_coordinates in coordinate_list:
                 pass
@@ -52,6 +61,24 @@ class Board:
                 coordinate_list.append(rand_coordinates)
                 x += 1
         return coordinate_list
+
+    def guess_computer_ships(self, col, row):
+        """
+        Let's the player guess the computer's ship coordinates
+        """
+        coordinate_list = self.create_five_random_coordinates()
+        col_num = self.column_number(col)
+        coords = [row, col_num]
+        print(f"coords: {coords}")
+        print(f"coordinate_list before: {coordinate_list}")
+        if coords in coordinate_list:
+            print("It's a hit!")
+            self.board[int(row)][col_num] = "x"
+            coordinate_list.remove(coords)
+        else:
+            print("It's a miss...")
+            self.board[int(row)][col_num] = "o"
+        print(f"coordinate_list after: {coordinate_list}")
 
 
 title = [
@@ -76,28 +103,66 @@ for row in title:
 print(instructions)
 
 player_name = input("Please enter your name: ")
-player_board = Board(f"{player_name}\n")
+player_board = Board(player_name)
 computer_board = Board("Computer")
 
 player_board.display_board()
 
-i = 0
-while i < 5:
-    player_coordinates = input(
-        f"Please insert the coordinates where you want to place ship number {i + 1}. You have 5 ships in total. \nThe coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
+ships_placed = False
+while ships_placed == False:
+    ship_placement = input(
+        "You can either choose the coordinates of your ships yourself or you can let the computer choose random coordinates for you.\nDo you want to choose the coordinates yourself? Type 'y' for yes or 'n' for no: "
     )
-    try:
-        a, b = player_coordinates.split()
-        player_board.place_ships(a, b)
-    except ValueError:
-        print(
-            "Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!"
-        )
-    else:
-        a, b = player_coordinates.split()
-        player_board.place_ships(a, b)
-        i += 1
+    if ship_placement.lower() == "n":
+        coordinates = player_board.create_five_random_coordinates()
+        for coor in coordinates:
+            a, b = coor
+            player_board.place_ships(a, b)
         player_board.display_board()
+        ships_placed = True
+    elif ship_placement.lower() == "y":
+        i = 0
+        while i < 5:
+            player_coordinates = input(
+                f"Please insert the coordinates where you want to place ship number {i + 1}.\nThe coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
+            )
+            try:
+                a, b = player_coordinates.split()
+                player_board.place_ships(a, b)
+            except ValueError:
+                print(
+                    "Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!"
+                )
+            else:
+                a, b = player_coordinates.split()
+                player_board.place_ships(a, b)
+                i += 1
+                player_board.display_board()
+        ships_placed = True
+    else:
+        print("Input not valid")
 
-computer_board.place_ships_randomly()
+
+computer_board.create_five_random_coordinates()
 computer_board.display_board()
+
+flag = True
+while flag == True:
+    coordinates = input(
+        "Which coordinates do you want to shoot?\nThe coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
+    )
+    if coordinates == "none":
+        flag = False
+    else:
+        try:
+            a, b = coordinates.split()
+            computer_board.guess_computer_ships(a, b)
+        except ValueError:
+            print(
+                "Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!"
+            )
+        else:
+            a, b = coordinates.split()
+            computer_board.guess_computer_ships(a, b)
+            player_board.display_board()
+            computer_board.display_board()
