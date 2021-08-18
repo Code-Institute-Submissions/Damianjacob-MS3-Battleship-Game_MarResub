@@ -1,5 +1,11 @@
 import random
 
+# import sys
+
+# sys.path.append("board-class.py")
+
+# from boardclass.py import Board
+
 
 class Board:
     """
@@ -44,7 +50,7 @@ class Board:
 
     def create_five_random_coordinates(self):
         """
-        Creates 5 random coordinates without duplicates and returns them in a list of lists.
+        Creates 5 random coordinates without duplicates and returns them in a nested list.
         """
         col_list = ["A", "B", "C", "D", "E"]
         row_list = [1, 2, 3, 4, 5]
@@ -62,23 +68,22 @@ class Board:
                 x += 1
         return coordinate_list
 
-    def guess_computer_ships(self, col, row):
+    def guess_computer_ships(self, col, row, coor_list):
         """
-        Let's the player guess the computer's ship coordinates
+        Lets the player guess the computer's ship coordinates.
         """
-        coordinate_list = self.create_five_random_coordinates()
         col_num = self.column_number(col)
-        coords = [row, col_num]
+        coords = [int(row), col_num]
         print(f"coords: {coords}")
-        print(f"coordinate_list before: {coordinate_list}")
-        if coords in coordinate_list:
+        print(f"coordinate_list before: {coor_list}")
+        if coords in coor_list:
             print("It's a hit!")
             self.board[int(row)][col_num] = "x"
-            coordinate_list.remove(coords)
+            coor_list.remove(coords)
         else:
             print("It's a miss...")
             self.board[int(row)][col_num] = "o"
-        print(f"coordinate_list after: {coordinate_list}")
+        print(f"coordinate_list after: {coor_list}")
 
 
 title = [
@@ -105,6 +110,7 @@ print(instructions)
 player_name = input("Please enter your name: ")
 player_board = Board(player_name)
 computer_board = Board("Computer")
+computer_coordinates = computer_board.create_five_random_coordinates()
 
 player_board.display_board()
 
@@ -142,27 +148,33 @@ while ships_placed == False:
     else:
         print("Input not valid")
 
-
-computer_board.create_five_random_coordinates()
 computer_board.display_board()
 
-flag = True
-while flag == True:
-    coordinates = input(
-        "Which coordinates do you want to shoot?\nThe coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
-    )
-    if coordinates == "none":
-        flag = False
-    else:
-        try:
-            a, b = coordinates.split()
-            computer_board.guess_computer_ships(a, b)
-        except ValueError:
+
+def player_turn():
+    flag = True
+    while flag == True:
+        coordinates = input(
+            "Which coordinates do you want to shoot?\nThe coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
+        )
+        if len(coordinates) > 3:
             print(
-                "Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!"
+                "\nAttention! Your input is too long. Tt should only contain a letter, a space and a number.\n"
             )
+            continue
+        elif len(coordinates) < 3:
+            print(
+                "\nAttention! Your input is too short. It should only contain a letter, a space and a number.\n"
+            )
+            continue
         else:
-            a, b = coordinates.split()
-            computer_board.guess_computer_ships(a, b)
-            player_board.display_board()
-            computer_board.display_board()
+            try:
+                a, b = coordinates.split()
+                computer_board.guess_computer_ships(a, b, computer_coordinates)
+                player_board.display_board()
+                computer_board.display_board()
+                flag = False
+            except ValueError:
+                print(
+                    "\nAttention! Your coordinates should be a letter from A to E and a number from 1 to 5, separated by a space. The letter should come before the number.\n"
+                )
