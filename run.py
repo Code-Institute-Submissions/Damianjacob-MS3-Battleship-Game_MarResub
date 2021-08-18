@@ -22,6 +22,7 @@ class Board:
             ["4", "~", "~", "~", "~", "~"],
             ["5", "~", "~", "~", "~", "~"],
         ]
+        self.ship_count = 5
 
     def column_number(self, col):
         """
@@ -85,6 +86,72 @@ class Board:
             self.board[int(row)][col_num] = "o"
         print(f"coordinate_list after: {coor_list}")
 
+    def guess_player_ships(self):
+        """
+        Takes col and row, checks which character is at those coordinates.
+        if the character is x or o, it does nothing but the function should start
+        over again. If there is an @ it transforms it into an x and detracts one point
+        from the ship count.
+        """
+        already_hit = False
+        while already_hit == False:
+            rand_col = random.randrange(1, 5)
+            rand_row = random.randrange(1, 5)
+            coordinate = self.board[rand_row][rand_col]
+
+            if coordinate == "o" or coordinate == "x":
+                continue
+            elif coordinate == "@":
+                coordinate = "x"
+                self.ship_count -= 1
+                already_hit = True
+                print(
+                    f"\nCaptain! The enemy has sunken one of our ships! We still have {self.ship_count} ships in our fleet."
+                )
+            else:
+                coordinate = "o"
+                already_hit = True
+
+
+computer_board = Board("Computer")
+computer_coordinates = computer_board.create_five_random_coordinates()
+
+
+def player_turn():
+    """
+    Prompts the player to insert the coordinates they want to attack. Checks for the coordinates correct length and returns an
+    error message if the lenght is shorter or longer than intended. Checks if a value error is raised and returns a message if so.
+    In both cases the user will be asked to insert the coordinates again. If the coordinates are correct, this function checks if
+    those coordinates are in the computer_coordinates list, which contains five randomly generated coordinates. If yes, it
+    puts an x on the computer board and removes the coordinates from computer_coordinates. Otherwise, it puts an o on the computer board.
+    """
+    flag = True
+    while flag == True:
+        coordinates = input(
+            "Which coordinates do you want to shoot?\nThe coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
+        )
+        if len(coordinates) > 3:
+            print(
+                "\nAttention! Your input is too long. Tt should only contain a letter, a space and a number.\n"
+            )
+            continue
+        elif len(coordinates) < 3:
+            print(
+                "\nAttention! Your input is too short. It should only contain a letter, a space and a number.\n"
+            )
+            continue
+        else:
+            try:
+                a, b = coordinates.split()
+                computer_board.guess_computer_ships(a, b, computer_coordinates)
+                player_board.display_board()
+                computer_board.display_board()
+                flag = False
+            except ValueError:
+                print(
+                    "\nAttention! Your coordinates should be a letter from A to E and a number from 1 to 5, separated by a space. The letter should come before the number.\n"
+                )
+
 
 title = [
     [" *", "-", "-", "-", "-", "-", "*", "-", "-", "-", "-", "*"],
@@ -109,9 +176,6 @@ print(instructions)
 
 player_name = input("Please enter your name: ")
 player_board = Board(player_name)
-computer_board = Board("Computer")
-computer_coordinates = computer_board.create_five_random_coordinates()
-
 player_board.display_board()
 
 ships_placed = False
@@ -149,32 +213,3 @@ while ships_placed == False:
         print("Input not valid")
 
 computer_board.display_board()
-
-
-def player_turn():
-    flag = True
-    while flag == True:
-        coordinates = input(
-            "Which coordinates do you want to shoot?\nThe coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
-        )
-        if len(coordinates) > 3:
-            print(
-                "\nAttention! Your input is too long. Tt should only contain a letter, a space and a number.\n"
-            )
-            continue
-        elif len(coordinates) < 3:
-            print(
-                "\nAttention! Your input is too short. It should only contain a letter, a space and a number.\n"
-            )
-            continue
-        else:
-            try:
-                a, b = coordinates.split()
-                computer_board.guess_computer_ships(a, b, computer_coordinates)
-                player_board.display_board()
-                computer_board.display_board()
-                flag = False
-            except ValueError:
-                print(
-                    "\nAttention! Your coordinates should be a letter from A to E and a number from 1 to 5, separated by a space. The letter should come before the number.\n"
-                )
