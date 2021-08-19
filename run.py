@@ -154,10 +154,6 @@ class Board:
             print(f"ship_count after loop: {self.ship_count}")
 
 
-computer_board = Board("Computer")
-computer_coordinates = computer_board.create_five_random_coordinates()
-
-
 def player_turn():
     """
     Prompts the player to insert the coordinates they want to attack. Checks for the coordinates correct length and returns an
@@ -218,14 +214,11 @@ Once your ships are placed, you and the computer will take turns to shoot at coo
 If you miss, a "o" will appear on your enemies board, and when you hit an enemy ship an "x" will appear. You can't shoot the same coordinates twice! Good luck!
 """
 
-for row in title:
-    print(" ".join(row) + "\n")
 
-print(instructions)
-
-player_name = input("Please enter your name: ")
-player_board = Board(player_name)
-player_board.display_board()
+def show_title_and_instructions():
+    for row in title:
+        print(" ".join(row) + "\n")
+    print(instructions)
 
 
 def place_ships():
@@ -234,7 +227,10 @@ def place_ships():
     have them placed randomly. Changes the user input to lowercase. If the user input is neither one of the two options,
     prints "input not valid" and the loop runs again.
     If the user input is "n": uses the create_five_random_coordinates method and places a ship at each of the five coordinates.
-    If the user input is "y": runs a loop that lets the user insert a coordinate for 5 times and places a ship at that coordinate.
+    If the user input is "y": runs a loop that lets the user insert a coordinate for 5 times and places a ship at that coordinate. If the
+    player mistakenly chose the same coordinate twice, an message will be printed to the terminal and the user will be asked to insert
+    a new coordinate.
+    Checks that the user's input has the correct lenght and contains usable data for the function with a try statement.
     """
     ships_placed = False
     while ships_placed == False:
@@ -277,14 +273,32 @@ def place_ships():
     computer_board.display_board()
 
 
-coin_flip = random.randrange(1, 3)
-if coin_flip == 1:
-    print("You won the coin flip! You start. Good luck!")
-    while computer_board.ship_count > 0 and player_board.ship_count > 0:
-        player_turn()
-        computer_turn()
-else:
-    print("Your enemy won the coin flip! You start second. Good luck!")
-    while computer_board.ship_count > 0 and player_board.ship_count > 0:
-        computer_turn()
-        player_turn()
+def start_game():
+    coin_flip = random.randrange(1, 3)
+    if coin_flip == 1:
+        print("You won the coin flip! You start. Good luck!")
+        while computer_board.ship_count > 0 and player_board.ship_count > 0:
+            player_turn()
+            computer_turn()
+    else:
+        print("Your enemy won the coin flip! You start second. Good luck!")
+        while computer_board.ship_count > 0 and player_board.ship_count > 0:
+            computer_turn()
+            player_turn()
+
+
+while True:
+    show_title_and_instructions()
+
+    computer_board = Board("Computer")
+    computer_coordinates = computer_board.create_five_random_coordinates()
+
+    player_name = input("Please enter your name: ")
+    player_board = Board(player_name)
+    player_board.display_board()
+
+    place_ships()
+    start_game()
+    another_game = input(
+        "Would you like to play another game? insert 'y' for yes and 'n' for no: "
+    )
