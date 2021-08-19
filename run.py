@@ -1,3 +1,21 @@
+import gspread
+from google.oauth2.service_account import Credentials
+
+SCOPE = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive",
+]
+
+CREDS = Credentials.from_service_account_file("creds.json")
+SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
+SHEET = GSPREAD_CLIENT.open("Battleship-stats")
+
+stats = SHEET.worksheet("stats")
+data = stats.get_all_values()
+print(data)
+
 import random
 
 # import sys
@@ -102,17 +120,21 @@ class Board:
         over again. If there is an @ it transforms it into an x and detracts one point
         from the ship count.
         """
+        print("executing guess_player_ships...")
         already_hit = False
         while already_hit == False:
             rand_col = random.randrange(1, 5)
             rand_row = random.randrange(1, 5)
             coordinate = self.board[rand_row][rand_col]
-
+            print(f"coordinate before: {coordinate}")
+            print(f"ship_count before: {self.ship_count}")
             if coordinate == "o" or coordinate == "x":
+                print("this coordinate has already been hit")
                 continue
             elif coordinate == "@":
-                coordinate = "x"
+                self.board[rand_row][rand_col] = "x"
                 self.ship_count -= 1
+                print()
                 already_hit = True
                 if self.ship_count > 1:
                     print(
@@ -123,8 +145,11 @@ class Board:
                         f"\n{player_name}! The enemy has sunken one of our ships! We only have {self.ship_count} ship left..."
                     )
             else:
-                coordinate = "o"
+                print("The enemy missed!")
+                self.board[rand_row][rand_col] = "o"
                 already_hit = True
+            print(f"coordinate after loop: {coordinate}")
+            print(f"ship_count after loop: {self.ship_count}")
 
 
 computer_board = Board("Computer")
@@ -170,7 +195,9 @@ def player_turn():
 
 
 def computer_turn():
-    computer_board.guess_player_ships()
+    player_board.guess_player_ships()
+    player_board.display_board()
+    computer_board.display_board()
 
 
 title = [
