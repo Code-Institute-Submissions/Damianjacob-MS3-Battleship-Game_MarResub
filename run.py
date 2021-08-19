@@ -14,7 +14,7 @@ SHEET = GSPREAD_CLIENT.open("Battleship-stats")
 
 stats = SHEET.worksheet("stats")
 data = stats.get_all_values()
-print(data)
+
 
 import random
 
@@ -138,14 +138,16 @@ class Board:
                 already_hit = True
                 if self.ship_count > 1:
                     print(
-                        f"\n{player_name}! The enemy has sunken one of our ships! We still have {self.ship_count} ships in our fleet."
+                        f"\n{player_name}! The enemy has sunken our ship at {self.board[0][rand_col].upper()} {rand_row}! We still have {self.ship_count} ships in our fleet."
                     )
                 else:
                     print(
-                        f"\n{player_name}! The enemy has sunken one of our ships! We only have {self.ship_count} ship left..."
+                        f"\n{player_name}! The enemy has sunken our ship at {self.board[0][rand_col].upper()} {rand_row}! We only have {self.ship_count} ship left..."
                     )
             else:
-                print("The enemy missed!")
+                print(
+                    f"\nThe enemy shot {self.board[0][rand_col].upper()} {rand_row}. It's a miss!\n"
+                )
                 self.board[rand_row][rand_col] = "o"
                 already_hit = True
             print(f"coordinate after loop: {coordinate}")
@@ -225,41 +227,55 @@ player_name = input("Please enter your name: ")
 player_board = Board(player_name)
 player_board.display_board()
 
-ships_placed = False
-while ships_placed == False:
-    ship_placement = input(
-        "You can either choose the coordinates of your ships yourself or you can let the computer choose random coordinates for you.\nDo you want to choose the coordinates yourself? Type 'y' for yes or 'n' for no: "
-    )
-    if ship_placement.lower() == "n":
-        coordinates = player_board.create_five_random_coordinates()
-        for coor in coordinates:
-            a, b = coor
-            player_board.place_ships(a, b)
-        player_board.display_board()
-        ships_placed = True
-    elif ship_placement.lower() == "y":
-        i = 0
-        while i < 5:
-            player_coordinates = input(
-                f"Please insert the coordinates where you want to place ship number {i + 1}.\nThe coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
-            )
-            try:
-                a, b = player_coordinates.split()
-                player_board.place_ships(a, b)
-            except ValueError:
-                print(
-                    "Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!"
-                )
-            else:
-                a, b = player_coordinates.split()
-                player_board.place_ships(a, b)
-                i += 1
-                player_board.display_board()
-        ships_placed = True
-    else:
-        print("Input not valid")
 
-computer_board.display_board()
+def place_ships():
+    """
+    Prompts the player to select whether they want to place their ships themselves or if they want to
+    have them placed randomly. Changes the user input to lowercase. If the user input is neither one of the two options,
+    prints "input not valid" and the loop runs again.
+    If the user input is "n": uses the create_five_random_coordinates method and places a ship at each of the five coordinates.
+    If the user input is "y": runs a loop that lets the user insert a coordinate for 5 times and places a ship at that coordinate.
+    """
+    ships_placed = False
+    while ships_placed == False:
+        ship_placement = input(
+            "You can either choose the coordinates of your ships yourself or you can have your ships placed randomly on the board.\nDo you want to choose the coordinates yourself? Type 'y' for yes or 'n' for no: "
+        )
+        if ship_placement.lower() == "n":
+            coordinates = player_board.create_five_random_coordinates()
+            for coor in coordinates:
+                a, b = coor
+                player_board.place_ships(a, b)
+            player_board.display_board()
+            ships_placed = True
+        elif ship_placement.lower() == "y":
+            i = 0
+            while i < 5:
+                player_coordinates = input(
+                    f"Please insert the coordinates where you want to place ship number {i + 1}.\nThe coordinates should be the column letter and the row number, separated by a space (like this: A 1): "
+                )
+                try:
+                    a, b = player_coordinates.split()
+                    player_board.place_ships(a, b)
+                except ValueError:
+                    print(
+                        "Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!"
+                    )
+                else:
+                    a, b = player_coordinates.split()
+                    if player_board.board[int(b)][player_board.column_number(a)] == "@":
+                        print(
+                            "\nYou already have placed a ship at this coordinate! Please choose another coordinate.\n"
+                        )
+                    else:
+                        player_board.place_ships(a, b)
+                        i += 1
+                        player_board.display_board()
+            ships_placed = True
+        else:
+            print("Input not valid")
+    computer_board.display_board()
+
 
 coin_flip = random.randrange(1, 3)
 if coin_flip == 1:
