@@ -13,8 +13,7 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("Battleship-stats")
 
 stats = SHEET.worksheet("stats")
-data = stats.get_all_values()
-
+# data = stats.get_all_values()
 
 import random
 
@@ -93,25 +92,24 @@ class Board:
         """
         col_num = self.column_number(col)
         coords = [int(row), col_num]
-        print(f"coords: {coords}")
-        print(f"coordinate_list before: {coor_list}")
+        # print(f"coords: {coords}")
+        # print(f"coordinate_list before: {coor_list}")
         if coords in coor_list:
-            print("It's a hit!")
             self.board[int(row)][col_num] = "x"
             coor_list.remove(coords)
             self.ship_count -= 1
             if self.ship_count > 1:
                 print(
-                    f"Well done, it's a hit! We need to sink {self.ship_count} more ships to destroy the enemy's fleet"
+                    f"\n---You shot {col.upper()} {row}, it's a hit! We need to sink {self.ship_count} more ships to destroy the enemy's fleet---"
                 )
             else:
                 print(
-                    f"Well done, it's a hit! We only need to sink one more ship to destroy the enemy's fleet!"
+                    f"\n---You shot {col.upper()} {row}, it's a hit! We only need to sink one more ship to destroy the enemy's fleet!---"
                 )
         else:
-            print("It's a miss...")
+            print(f"\n---You shot {col.upper()} {row}, it's a miss...---")
             self.board[int(row)][col_num] = "o"
-        print(f"coordinate_list after: {coor_list}")
+        # print(f"coordinate_list after: {coor_list}")
 
     def guess_player_ships(self):
         """
@@ -120,38 +118,35 @@ class Board:
         over again. If there is an @ it transforms it into an x and detracts one point
         from the ship count.
         """
-        print("executing guess_player_ships...")
         already_hit = False
         while already_hit == False:
             rand_col = random.randrange(1, 5)
             rand_row = random.randrange(1, 5)
             coordinate = self.board[rand_row][rand_col]
-            print(f"coordinate before: {coordinate}")
-            print(f"ship_count before: {self.ship_count}")
+            # print(f"coordinate before: {coordinate}")
+            # print(f"ship_count before: {self.ship_count}")
             if coordinate == "o" or coordinate == "x":
-                print("this coordinate has already been hit")
                 continue
             elif coordinate == "@":
                 self.board[rand_row][rand_col] = "x"
                 self.ship_count -= 1
-                print()
                 already_hit = True
                 if self.ship_count > 1:
                     print(
-                        f"\n{player_name}! The enemy has sunken our ship at {self.board[0][rand_col].upper()} {rand_row}! We still have {self.ship_count} ships in our fleet."
+                        f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][rand_col].upper()} {rand_row}! We still have {self.ship_count} ships in our fleet.---"
                     )
                 else:
                     print(
-                        f"\n{player_name}! The enemy has sunken our ship at {self.board[0][rand_col].upper()} {rand_row}! We only have {self.ship_count} ship left..."
+                        f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][rand_col].upper()} {rand_row}! We only have {self.ship_count} ship left...---"
                     )
             else:
                 print(
-                    f"\nThe enemy shot {self.board[0][rand_col].upper()} {rand_row}. It's a miss!\n"
+                    f"\n---The enemy shot {self.board[0][rand_col].upper()} {rand_row}. It's a miss!---"
                 )
                 self.board[rand_row][rand_col] = "o"
                 already_hit = True
-            print(f"coordinate after loop: {coordinate}")
-            print(f"ship_count after loop: {self.ship_count}")
+            # print(f"coordinate after loop: {coordinate}")
+            # print(f"ship_count after loop: {self.ship_count}")
 
 
 def player_turn():
@@ -169,33 +164,36 @@ def player_turn():
         )
         if len(coordinates) > 3:
             print(
-                "\nAttention! Your input is too long. Tt should only contain a letter, a space and a number.\n"
+                "\n***Attention! Your input is too long. Tt should only contain a letter, a space and a number.***\n"
             )
             continue
         elif len(coordinates) < 3:
             print(
-                "\nAttention! Your input is too short. It should only contain a letter, a space and a number.\n"
+                "\n***Attention! Your input is too short. It should only contain a letter, a space and a number.***\n"
             )
             continue
         else:
             try:
                 a, b = coordinates.split()
-                computer_board.guess_computer_ships(a, b, computer_coordinates)
-                player_board.display_board()
-                computer_board.display_board()
-                flag = False
-                print(flag)
-                break
+                if (
+                    computer_board.board[int(b)][computer_board.column_number(a)] == "x"
+                    or computer_board.board[int(b)][computer_board.column_number(a)]
+                    == "o"
+                ):
+                    print(
+                        f"\n***You already shot {a.upper()} {b}! Please choose another coordinate***"
+                    )
+                else:
+                    computer_board.guess_computer_ships(a, b, computer_coordinates)
+                    flag = False
             except ValueError:
                 print(
-                    "\nAttention! Your coordinates should be a letter from A to E and a number from 1 to 5, separated by a space. The letter should come before the number.\n"
+                    "\n***Attention! Your coordinates should be a letter from A to E and a number from 1 to 5, separated by a space. The letter should come before the number.***\n"
                 )
 
 
 def computer_turn():
     player_board.guess_player_ships()
-    player_board.display_board()
-    computer_board.display_board()
 
 
 title = [
@@ -255,13 +253,13 @@ def place_ships():
                     player_board.place_ships(a, b)
                 except ValueError:
                     print(
-                        "Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!"
+                        "***Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!***"
                     )
                 else:
                     a, b = player_coordinates.split()
                     if player_board.board[int(b)][player_board.column_number(a)] == "@":
                         print(
-                            "\nYou already have placed a ship at this coordinate! Please choose another coordinate.\n"
+                            "\n***You already have placed a ship at this coordinate! Please choose another coordinate.***\n"
                         )
                     else:
                         player_board.place_ships(a, b)
@@ -269,22 +267,46 @@ def place_ships():
                         player_board.display_board()
             ships_placed = True
         else:
-            print("Input not valid")
+            print(
+                "***Input not valid, please insert either y or n without any space and then press enter***"
+            )
     computer_board.display_board()
 
 
 def start_game():
+    """
+    Determines who starts the game by flipping a coin. If the player wins, runs a loop with the player_turn and compuyter_turn functions
+    while both players still have all of their ships. If at any point the ship_count of one of the players drops to zero, the loop
+    stops.
+    """
     coin_flip = random.randrange(1, 3)
     if coin_flip == 1:
-        print("You won the coin flip! You start. Good luck!")
+        print("---You start first. Good luck!---")
         while computer_board.ship_count > 0 and player_board.ship_count > 0:
             player_turn()
+            if computer_board.ship_count == 0 or player_board.ship_count == 0:
+                player_board.display_board()
+                computer_board.display_board()
+                break
             computer_turn()
+            player_board.display_board()
+            computer_board.display_board()
     else:
-        print("Your enemy won the coin flip! You start second. Good luck!")
+        print("---Your enemy starts first! You start second. Good luck!---")
         while computer_board.ship_count > 0 and player_board.ship_count > 0:
             computer_turn()
+            player_board.display_board()
+            computer_board.display_board()
+            if computer_board.ship_count == 0 or player_board.ship_count == 0:
+                break
             player_turn()
+
+
+def game_over():
+    if computer_board.ship_count == 0:
+        print("\n---Congratulations, you won!---\n")
+    elif player_board.ship_count == 0:
+        print("\n---GAME OVER! The enemy has sunken our entire fleet...---\n")
 
 
 while True:
@@ -299,6 +321,11 @@ while True:
 
     place_ships()
     start_game()
+    game_over()
     another_game = input(
         "Would you like to play another game? insert 'y' for yes and 'n' for no: "
     )
+    if another_game.lower() == "y":
+        pass
+    elif another_game.lower() == "n":
+        break
