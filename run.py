@@ -13,15 +13,80 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("Battleship-stats")
 
 stats = SHEET.worksheet("stats")
-# data = stats.get_all_values()
 
 import random
+
+from tabulate import tabulate
 
 # import sys
 
 # sys.path.append("board-class.py")
 
 # from boardclass.py import Board
+
+existing_rows = len(stats.row_values(1))
+
+existing_columns = len(stats.col_values(1))
+
+print(existing_columns)
+print(existing_rows)
+
+
+def get_game_stats(n_turns, p_hitrate, c_hitrate):
+
+    turns_column = stats.col_values(1)
+    n_of_turns_list = turns_column[1:]
+    avg_n_of_turns = sum(n_of_turns_list) / len(n_of_turns_list)
+
+    player_wins_column = stats.col_values(2)
+    player_wins_list = player_wins_column[1:]
+    tot_player_wins = sum(player_wins_list)
+
+    computer_wins_column = stats.col_values(3)
+    computer_wins_list = computer_wins_column[1:]
+    tot_computer_wins = sum(computer_wins_list)
+
+    player_hit_rate_column = stats.col_values(4)
+    player_hit_rate_list = player_hit_rate_column[1:]
+    avg_player_hit_rate = sum(player_hit_rate_list) / len(player_hit_rate_list)
+
+    computer_hit_rate_column = stats.col_values(5)
+    computer_hit_rate_list = computer_hit_rate_column[1:]
+    avg_computer_hit_rate = sum(computer_hit_rate_list) / len(computer_hit_rate_list)
+
+    print(
+        "\nBelow you can see your stats compared to the average stats of people who played this game previously\n"
+    )
+    print(
+        tabulate(
+            [
+                ["This game", n_turns, p_hitrate, c_hitrate, "-", "-"],
+                [
+                    "Average",
+                    avg_n_of_turns,
+                    avg_player_hit_rate,
+                    avg_computer_hit_rate,
+                    tot_player_wins,
+                    tot_computer_wins,
+                ],
+            ],
+            headers=[
+                "",
+                "Number of turns",
+                "Player hit rate",
+                "Computer hit rate",
+                "Total player wins",
+                "Total computer wins",
+            ],
+        )
+    )
+
+
+get_game_stats(43, 23, 20)
+
+
+# stats.update_cell(existing_rows + 1, 1, "henlo")
+# stats.update_cell(2, 1, "doge")
 
 
 class Board:
@@ -40,6 +105,9 @@ class Board:
             ["5", "~", "~", "~", "~", "~"],
         ]
         self.ship_count = 5
+        self.turn_count = 0
+        self.win = 0
+        self.num_of_getting_hit = 5 - self.ship_count
 
     def column_number(self, col):
         """
@@ -102,7 +170,7 @@ class Board:
                 print(
                     f"\n---You shot {col.upper()} {row}, it's a hit! We need to sink {self.ship_count} more ships to destroy the enemy's fleet---"
                 )
-            else:
+            elif self.ship_count == 1:
                 print(
                     f"\n---You shot {col.upper()} {row}, it's a hit! We only need to sink one more ship to destroy the enemy's fleet!---"
                 )
@@ -185,6 +253,7 @@ def player_turn():
                     )
                 else:
                     computer_board.guess_computer_ships(a, b, computer_coordinates)
+                    player_board.turn_count += 1
                     flag = False
             except ValueError:
                 print(
@@ -194,6 +263,7 @@ def player_turn():
 
 def computer_turn():
     player_board.guess_player_ships()
+    computer_board.turn_count += 1
 
 
 title = [
@@ -250,13 +320,6 @@ def place_ships():
                 )
                 try:
                     a, b = player_coordinates.split()
-                    player_board.place_ships(a, b)
-                except ValueError:
-                    print(
-                        "***Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!***"
-                    )
-                else:
-                    a, b = player_coordinates.split()
                     if player_board.board[int(b)][player_board.column_number(a)] == "@":
                         print(
                             "\n***You already have placed a ship at this coordinate! Please choose another coordinate.***\n"
@@ -265,6 +328,10 @@ def place_ships():
                         player_board.place_ships(a, b)
                         i += 1
                         player_board.display_board()
+                except ValueError:
+                    print(
+                        "***Your coordinates have to be exactly two characters, should be separated by a space and the letter should come before the number. Please insert them again!***"
+                    )
             ships_placed = True
         else:
             print(
@@ -305,11 +372,21 @@ def start_game():
 def game_over():
     if computer_board.ship_count == 0:
         print("\n---Congratulations, you won!---\n")
+        player_board.win += 1
     elif player_board.ship_count == 0:
         print("\n---GAME OVER! The enemy has sunken our entire fleet...---\n")
+        computer_board.win += 1
 
 
-while True:
+def update_stats_spreadsheet(game_stats):
+    """
+    Updates a google sheet with game stats from the current game
+    """
+    stats.append_row(game_stats)
+
+
+play_game = True
+while play_game == True:
     show_title_and_instructions()
 
     computer_board = Board("Computer")
@@ -322,10 +399,35 @@ while True:
     place_ships()
     start_game()
     game_over()
-    another_game = input(
-        "Would you like to play another game? insert 'y' for yes and 'n' for no: "
+
+    # The following piece of code calculates game stats and updates the google sheet where they are stored
+    num_of_turns = player_board.turn_count + computer_board.turn_count
+    computer_hit_rate = (
+        player_board.num_of_getting_hit / computer_board.turn_count * 100
     )
-    if another_game.lower() == "y":
-        pass
-    elif another_game.lower() == "n":
-        break
+    player_hit_rate = computer_board.num_of_getting_hit / player_board.turn_count * 100
+
+    current_game_stats = [
+        num_of_turns,
+        player_board.win,
+        computer_board.win,
+        player_hit_rate,
+        computer_hit_rate,
+    ]
+
+    update_stats_spreadsheet(current_game_stats)
+
+    question_answered = False
+    while question_answered == False:
+        user_answer = input(
+            "Would you like to play another game? insert 'y' for yes and 'n' for no, insert 's' to see your game stats: "
+        )
+        if user_answer.lower().strip() == "y":
+            question_answered = True
+        elif user_answer.lower().strip() == "n":
+            play_game = False
+            question_answered = True
+        elif user_answer.lower().strip() == "s":
+            pass
+        else:
+            print("***Invalid input, please type either y or n***")
