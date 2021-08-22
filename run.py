@@ -35,23 +35,23 @@ print(existing_rows)
 def get_game_stats(n_turns, p_hitrate, c_hitrate):
 
     turns_column = stats.col_values(1)
-    n_of_turns_list = turns_column[1:]
+    n_of_turns_list = [int(x) for x in turns_column[1:]]
     avg_n_of_turns = sum(n_of_turns_list) / len(n_of_turns_list)
 
     player_wins_column = stats.col_values(2)
-    player_wins_list = player_wins_column[1:]
+    player_wins_list = [int(x) for x in player_wins_column[1:]]
     tot_player_wins = sum(player_wins_list)
 
     computer_wins_column = stats.col_values(3)
-    computer_wins_list = computer_wins_column[1:]
+    computer_wins_list = [int(x) for x in computer_wins_column[1:]]
     tot_computer_wins = sum(computer_wins_list)
 
     player_hit_rate_column = stats.col_values(4)
-    player_hit_rate_list = player_hit_rate_column[1:]
+    player_hit_rate_list = [int(x) for x in player_hit_rate_column[1:]]
     avg_player_hit_rate = sum(player_hit_rate_list) / len(player_hit_rate_list)
 
     computer_hit_rate_column = stats.col_values(5)
-    computer_hit_rate_list = computer_hit_rate_column[1:]
+    computer_hit_rate_list = [int(x) for x in computer_hit_rate_column[1:]]
     avg_computer_hit_rate = sum(computer_hit_rate_list) / len(computer_hit_rate_list)
 
     print(
