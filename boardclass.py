@@ -16,6 +16,13 @@ class Board:
             ["4", "~", "~", "~", "~", "~"],
             ["5", "~", "~", "~", "~", "~"],
         ]
+        self.ship_count = 5
+        self.turn_count = 0
+        self.win = 0
+        self.num_of_getting_hit = 5 - self.ship_count
+        self.coordinates_list = [
+            (col, row) for col in range(1, 6) for row in range(1, 6)
+        ]
 
     def column_number(self, col):
         """
@@ -78,3 +85,10 @@ class Board:
             print("It's a miss...")
             self.board[int(row)][col_num] = "o"
         print(f"coordinate_list after: {coor_list}")
+
+
+coordinates_list = [(col, row) for col in range(1, 6) for row in range(1, 6)]
+print(coordinates_list)
+
+
+player_board = Board("Damian")

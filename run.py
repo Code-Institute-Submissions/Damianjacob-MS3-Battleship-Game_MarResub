@@ -1,3 +1,5 @@
+import random
+from tabulate import tabulate
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -14,9 +16,6 @@ SHEET = GSPREAD_CLIENT.open("Battleship-stats")
 
 stats = SHEET.worksheet("stats")
 
-import random
-
-from tabulate import tabulate
 
 # import sys
 
@@ -33,6 +32,10 @@ print(existing_rows)
 
 
 def get_game_stats(n_turns, p_hitrate, c_hitrate):
+    """
+    @n_turns
+
+    """
 
     turns_column = stats.col_values(1)
     n_of_turns_list = [int(x) for x in turns_column[1:]]
@@ -82,11 +85,7 @@ def get_game_stats(n_turns, p_hitrate, c_hitrate):
     )
 
 
-get_game_stats(43, 23, 20)
-
-
-# stats.update_cell(existing_rows + 1, 1, "henlo")
-# stats.update_cell(2, 1, "doge")
+# get_game_stats(43, 23, 20)
 
 
 class Board:
@@ -108,17 +107,22 @@ class Board:
         self.turn_count = 0
         self.win = 0
         self.num_of_getting_hit = 5 - self.ship_count
+        self.coordinates_list = [
+            (col, row) for col in range(1, 6) for row in range(1, 6)
+        ]
 
     def column_number(self, col):
         """
         Converts a letter from a to e to a number based on the letter's index in the first nested list inside the board list
         """
+        print("$$$ executing column_number() $$$")
         return self.board[0].index(col.upper())
 
     def display_board(self):
         """
         Prints the board and the name of its player to the terminal.
         """
+        print("$$$ executing display_board() $$$")
         print(f"\n   {self.name}'s board:\n")
         for row in self.board:
             joint_row = "   ".join(row)
@@ -128,6 +132,7 @@ class Board:
         """
         Places ships (represented by "@") at the coordinates specified by the player
         """
+        print("$$$ executing place_ships() $$$")
         if type(col) is str:
             col_num = self.column_number(col)
         else:
@@ -138,15 +143,16 @@ class Board:
         """
         Creates 5 random coordinates without duplicates and returns them in a nested list.
         """
+        print("$$$ executing create_five_random_coordinates $$$")
         col_list = ["A", "B", "C", "D", "E"]
         row_list = [1, 2, 3, 4, 5]
         coordinate_list = []
         x = 0
         while x < 5:
-            rand_col = random.choice(col_list)
-            rand_row = random.choice(row_list)
-            col_num = self.column_number(rand_col)
-            rand_coordinates = [rand_row, col_num]
+            col = random.choice(col_list)
+            row = random.choice(row_list)
+            col_num = self.column_number(col)
+            rand_coordinates = [row, col_num]
             if rand_coordinates in coordinate_list:
                 pass
             else:
@@ -158,6 +164,7 @@ class Board:
         """
         Lets the player guess the computer's ship coordinates.
         """
+        print("$$$ executing guess_computer_ships $$$")
         col_num = self.column_number(col)
         coords = [int(row), col_num]
         # print(f"coords: {coords}")
@@ -186,35 +193,41 @@ class Board:
         over again. If there is an @ it transforms it into an x and detracts one point
         from the ship count.
         """
-        already_hit = False
-        while already_hit == False:
-            rand_col = random.randrange(1, 5)
-            rand_row = random.randrange(1, 5)
-            coordinate = self.board[rand_row][rand_col]
-            # print(f"coordinate before: {coordinate}")
-            # print(f"ship_count before: {self.ship_count}")
-            if coordinate == "o" or coordinate == "x":
-                continue
-            elif coordinate == "@":
-                self.board[rand_row][rand_col] = "x"
-                self.ship_count -= 1
-                already_hit = True
-                if self.ship_count > 1:
-                    print(
-                        f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][rand_col].upper()} {rand_row}! We still have {self.ship_count} ships in our fleet.---"
-                    )
-                else:
-                    print(
-                        f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][rand_col].upper()} {rand_row}! We only have {self.ship_count} ship left...---"
-                    )
+        print("$$$ executing guess_player_ships $$$")
+
+        print(self.coordinates_list)
+        i = len(self.coordinates_list)
+        print(f"i (length of coordinates list): {i}")
+        rand_index = random.randrange(i)
+        print(f"rand_index: {rand_index}")
+        rand_coordinate = self.coordinates_list[rand_index]
+        print(f"rand_coordinate: {rand_coordinate}")
+
+        col, row = rand_coordinate
+        coordinate = self.board[row][col]
+        self.coordinates_list.remove(rand_coordinate)
+        if coordinate == "@":
+            print("$$$ executing code for when there is an undamaged ship (@) $$$")
+            self.board[row][col] = "x"
+            self.ship_count -= 1
+            if self.ship_count > 1:
+                print(
+                    f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][col].upper()} {row}! We still have {self.ship_count} ships in our fleet.---"
+                )
             else:
                 print(
-                    f"\n---The enemy shot {self.board[0][rand_col].upper()} {rand_row}. It's a miss!---"
+                    f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][col].upper()} {row}! We only have {self.ship_count} ship left...---"
                 )
-                self.board[rand_row][rand_col] = "o"
-                already_hit = True
-            # print(f"coordinate after loop: {coordinate}")
-            # print(f"ship_count after loop: {self.ship_count}")
+        else:
+            print(
+                "$$$ executing code for when at the coordinates there is not an @ $$$"
+            )
+            print(
+                f"\n---The enemy shot {self.board[0][col].upper()} {row}. It's a miss!---"
+            )
+            self.board[row][col] = "o"
+        print(f"coordinates after while loop inside guess_player_ships: {coordinate}")
+        print(f"ship_count after loop: {self.ship_count}")
 
 
 def player_turn():
@@ -225,6 +238,7 @@ def player_turn():
     those coordinates are in the computer_coordinates list, which contains five randomly generated coordinates. If yes, it
     puts an x on the computer board and removes the coordinates from computer_coordinates. Otherwise, it puts an o on the computer board.
     """
+    print("$$$ executing player_turn $$$")
     flag = True
     while flag == True:
         coordinates = input(
@@ -262,6 +276,7 @@ def player_turn():
 
 
 def computer_turn():
+    print("$$$ executing computer_turn $$$")
     player_board.guess_player_ships()
     computer_board.turn_count += 1
 
@@ -300,6 +315,7 @@ def place_ships():
     a new coordinate.
     Checks that the user's input has the correct lenght and contains usable data for the function with a try statement.
     """
+    print("$$$ executing place_ships $$$")
     ships_placed = False
     while ships_placed == False:
         ship_placement = input(
@@ -346,12 +362,22 @@ def start_game():
     while both players still have all of their ships. If at any point the ship_count of one of the players drops to zero, the loop
     stops.
     """
+    print("$$$ executing start_game $$$")
     coin_flip = random.randrange(1, 3)
     if coin_flip == 1:
         print("---You start first. Good luck!---")
         while computer_board.ship_count > 0 and player_board.ship_count > 0:
+            print(
+                "$$$ executing while loop for alternating turns inside start_game $$$"
+            )
             player_turn()
             if computer_board.ship_count == 0 or player_board.ship_count == 0:
+                print(
+                    "$$$ breaking out of loop because either player has a ship count of 0 $$$"
+                )
+                print(
+                    f"comp ship count:{computer_board.ship_count} player ship count: {player_board.ship_count}"
+                )
                 player_board.display_board()
                 computer_board.display_board()
                 break
@@ -361,15 +387,25 @@ def start_game():
     else:
         print("---Your enemy starts first! You start second. Good luck!---")
         while computer_board.ship_count > 0 and player_board.ship_count > 0:
+            print(
+                "$$$ executing while loop for alternating turns inside start_game $$$"
+            )
             computer_turn()
             player_board.display_board()
             computer_board.display_board()
             if computer_board.ship_count == 0 or player_board.ship_count == 0:
+                print(
+                    "$$$ breaking out of loop because either player has a ship count of 0 $$$"
+                )
+                print(
+                    f"comp ship count:{computer_board.ship_count} player ship count: {player_board.ship_count}"
+                )
                 break
             player_turn()
 
 
 def game_over():
+    print("$$$ executing game_over $$$")
     if computer_board.ship_count == 0:
         print("\n---Congratulations, you won!---\n")
         player_board.win += 1
@@ -382,6 +418,7 @@ def update_stats_spreadsheet(game_stats):
     """
     Updates a google sheet with game stats from the current game
     """
+    print("$$$ executing update_stats_spreadsheet $$$")
     stats.append_row(game_stats)
 
 
