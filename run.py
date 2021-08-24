@@ -38,7 +38,7 @@ def player_turn():
         coordinates = input(
             "Which coordinates do you want to shoot? The coordinates should\n"
             "be the column letter and the row number, separated by a space "
-            "(like this: A 1): "
+            "(like this: A 1):\n"
         )
         if len(coordinates) > 3:
             print(
@@ -154,7 +154,7 @@ def place_ships():
                     "\nPlease insert the coordinates where you want to place "
                     f"ship number {i + 1}.\nThe coordinates should be the "
                     " column letter and the row number, separated by a space "
-                    "(like this: A 1): "
+                    "(like this: A 1):\n"
                 )
                 try:
                     a, b = player_coordinates.split()
@@ -338,7 +338,7 @@ while play_game:
     while question_answered is False:
         user_answer = input(
             "\nWould you like to play another game? "
-            "Insert 'y' for yes and 'n' for no: "
+            "Insert 'y' for yes and 'n' for no:\n"
         )
         if user_answer.lower().strip() == "y":
             question_answered = True
