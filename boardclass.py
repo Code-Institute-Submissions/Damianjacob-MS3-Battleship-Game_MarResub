@@ -3,7 +3,9 @@ import random
 
 class Board:
     """
-    Creates a board instance for playing the battleship game. Contains methods for displaying the board and placing ships.
+    Creates a board instance for playing the battleship game.
+    Contains methods for displaying the board, placing ships, creating
+    random coordinates and guessing where ships are.
     """
 
     def __init__(self, name):
@@ -26,7 +28,8 @@ class Board:
 
     def column_number(self, col):
         """
-        Converts a letter from a to e to a number based on the letter's index in the first nested list inside the board list
+        Converts a letter from a to e to a number based on the
+        letter's index in the first nested list inside the board list
         """
         return self.board[0].index(col.upper())
 
@@ -41,7 +44,8 @@ class Board:
 
     def place_ships(self, col, row):
         """
-        Places ships (represented by "@") at the coordinates specified by the player
+        Places ships (represented by "@") at the
+        coordinates specified by the player
         """
         if type(col) is str:
             col_num = self.column_number(col)
@@ -51,7 +55,8 @@ class Board:
 
     def create_five_random_coordinates(self):
         """
-        Creates 5 random coordinates without duplicates and returns them in a nested list.
+        Creates 5 random coordinates without
+        duplicates and returns them in a nested list.
         """
         col_list = ["A", "B", "C", "D", "E"]
         row_list = [1, 2, 3, 4, 5]
@@ -82,11 +87,15 @@ class Board:
             self.num_of_getting_hit += 1
             if self.ship_count > 1:
                 print(
-                    f"\n---You shot {col.upper()} {row}, it's a hit! We need to sink {self.ship_count} more ships to destroy the enemy's fleet---"
+                    f"""\n---You shot {col.upper()} {row}, it's a hit! We
+                    need to sink {self.ship_count} more ships to
+                    destroy the enemy's fleet---"""
                 )
             elif self.ship_count == 1:
                 print(
-                    f"\n---You shot {col.upper()} {row}, it's a hit! We only need to sink one more ship to destroy the enemy's fleet!---"
+                    f"""\n---You shot {col.upper()} {row}, it's a hit!
+                    We only need to sink one more ship to destroy the
+                    enemy's fleet!---"""
                 )
         else:
             print(f"\n---You shot {col.upper()} {row}, it's a miss...---")
@@ -94,8 +103,10 @@ class Board:
 
     def guess_player_ships(self, player_name):
         """
-        Pulls a random coordinate from the coordinate_list instance variable, then removes that coordinate
-        from the coordinate_list and changes the corresponding character on the board based on
+        Pulls a random coordinate from the coordinate_list
+        instance variable, then removes that coordinate
+        from the coordinate_list and changes the
+        corresponding character on the board based on
         whether that character is an @ or not.
         """
         i = len(self.coordinates_list)
@@ -111,18 +122,25 @@ class Board:
             self.num_of_getting_hit += 1
             if self.ship_count > 1:
                 print(
-                    f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][col].upper()} {row}! We still have {self.ship_count} ships in our fleet.---"
+                    f"""\n---{player_name}! The enemy has sunken our ship at
+                    {self.board[0][col].upper()} {row}!
+                    We still have {self.ship_count} ships in our fleet.---"""
                 )
             elif self.ship_count == 1:
                 print(
-                    f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][col].upper()} {row}! We only have {self.ship_count} ship left...---"
+                    f"""\n---{player_name}! The enemy has sunken our ship at
+                    {self.board[0][col].upper()} {row}!
+                    We only have {self.ship_count} ship left...---"""
                 )
             else:
                 print(
-                    f"\n---{player_name}! The enemy has sunken our last ship at {self.board[0][col].upper()} {row}! We are defeated!---"
+                    f"""\n---{player_name}! The enemy has sunken our last ship
+                    at {self.board[0][col].upper()} {row}!
+                    We are defeated!---"""
                 )
         else:
             print(
-                f"\n---The enemy shot {self.board[0][col].upper()} {row}. It's a miss!---"
+                f"""\n---The enemy shot {self.board[0][col].upper()}
+                {row}. It's a miss!---"""
             )
             self.board[row][col] = "O"
