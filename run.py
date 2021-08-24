@@ -105,8 +105,7 @@ by entering coordinates. Place your ships wisely!Once your ships are placed,
 you and the computer will take turns to shoot at coordinates of each other's
 boards. Whoever manages to sink the enemy fleet first, wins! If you miss,
 a "O" will appear on your enemies board, and when you hit an enemy ship an "X"
-will appear. You can't shoot the same coordinates twice! Good luck!
-"""
+will appear. You can't shoot the same coordinates twice! Good luck!"""
 
 
 def show_title_and_instructions():
@@ -139,7 +138,7 @@ def place_ships():
             "You can either choose the coordinates of your ships yourself or "
             "you can have your ships placed randomly on the board.\nDo you want "
             "to choose the coordinates yourself? "
-            "Type 'y' for yes or 'n' for no: "
+            "Type 'y' for yes or 'n' for no:\n"
         )
         if ship_placement.lower() == "n":
             coordinates = player_board.create_five_random_coordinates()
@@ -326,7 +325,7 @@ while play_game:
     computer_board = Board("Computer")
     computer_coords = computer_board.create_five_random_coordinates()
 
-    player_name = input("Please enter your name: ")
+    player_name = input("Please enter your name:\n")
     player_board = Board(player_name)
     player_board.display_board()
 

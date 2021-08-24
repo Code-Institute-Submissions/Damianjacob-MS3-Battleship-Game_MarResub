@@ -1,51 +1,24 @@
-![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
 
-# CI-MS2-fun-Quiz
 
-- [CI-MS2-fun-Quiz](#ci-ms2-fun-quiz)
-  * [User Goals](#user-goals)
-  * [User Stories](#user-stories)
-  * [Site Owner Goals](#site-owner-goals)
-  * [Design Choices](#design-choices)
-  * [Colors](#colors)
-  * [Fonts](#fonts)
-  * [Structure](#structure)
-  * [Wireframes](#wireframes)
-  * [Technologies used](#technologies-used)
-  * [Features](#features)
-    + [Existing features](#existing-features)
-  * [Testing](#testing)
-    + [HTML](#html)
-    + [CSS](#css)
-    + [JavaScript](#javascript)
-    + [ACCESSIBILITY](#accessibility)
-    + [LIGHTHOUSE](#lighthouse)
-    + [Devices](#devices)
-    + [Fixed errors](#fixed-errors)
-  * [Bugs](#bugs)
-  * [Deployment](#deployment)
-  * [Credit](#credit)
-    + [Content](#content)
-    + [Media](#media)
-  * [Acknowledgements](#acknowledgements)
+# CI-MS3-battleship
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 See live version of site: https://damianjacob.github.io/CI-MS2-fun-Quiz/
 
 <img src='docs/amiresponsive.png' alt='Am i responsive screenshot'>
-The goal of this project is to create an interactive  and responsive website that contains a quiz game. The site is targeted towards people of all ages who want to have fun and test their knowledge. 
+
+The goal of this project is to create an interactive battleship game in Python that stores certain information about each game in a separate Google sheet.
 
 ## User Goals
 1. Have fun with an interactive game
-2. Test their knowledge
+2. Play against the computer
 3. Try to beat the game
-4. Follow us on social media
 5. Find instructions to the game
 ## User Stories
-1. "As a person who likes games, i expect this game to show my score and my remaining life points"
-2. "As a user who has not played many online-games before, i want to see some instructions before playing"
-3. "As a person interested in trivia, i want to see if i submitted the wrong response and i want to be shown the correct answer"
+1. "As a person who has not played battleship before, i expect this game to explain exactly how to play"
+2. "As a player I expect the game to tell me if I inserted an incorrect input.
+3. "As a person interested in stats, I would like to see how I did compared to other people who played this game."
 4. "As a user who really loves this game, i would like to follow its creator on social media to find out more about them"
 5. "As a user who wants to beat the game, i expect to be able to decide myself when to go to the next question"
 6. "As a gamer i expect the game to tell me when i've completed a section of it"
@@ -53,13 +26,6 @@ The goal of this project is to create an interactive  and responsive website tha
 8. "As a user who has different devices, i expect the site to be responsive and to work on all my devices"
 9. "As a user, if i enter an incorrect address i want to be able to return to the homepage without using the back button"
 10. "As a user who has many tabs open, i want to be able to recognize each site by its icon"
-
-## Site Owner Goals
-1. To have an good-looking site that incourages users to play
-2. To have an clear layout and a page with instructions for the user
-3. Have an intuitive interface
-4. Have social media links in the site
-5. Have a site that is responsive on all devices
 
 ## Design Choices
 I wanted to create a site that looks fun but still clean, so i opted to go for something very minimalistic, with a very simple layout and just three main colors.
