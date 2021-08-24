@@ -241,14 +241,6 @@ def get_game_stats(n_turns, p_hitrate, c_hitrate):
     n_of_turns_list = [int(x) for x in turns_column[1:]]
     avg_n_of_turns = sum(n_of_turns_list) / len(n_of_turns_list)
 
-    player_wins_column = stats.col_values(2)
-    player_wins_list = [int(x) for x in player_wins_column[1:]]
-    tot_player_wins = sum(player_wins_list)
-
-    computer_wins_column = stats.col_values(3)
-    computer_wins_list = [int(x) for x in computer_wins_column[1:]]
-    tot_computer_wins = sum(computer_wins_list)
-
     player_hit_rate_column = stats.col_values(4)
     player_hit_rate_list = [float(x) for x in player_hit_rate_column[1:]]
     avg_player_hit_rate = sum(player_hit_rate_list) / len(player_hit_rate_list)
@@ -269,26 +261,15 @@ def get_game_stats(n_turns, p_hitrate, c_hitrate):
                     n_turns,
                     f"{round(p_hitrate, 1)}%",
                     f"{round(c_hitrate, 1)}%",
-                    "-",
-                    "-",
                 ],
                 [
                     "Average",
                     round(avg_n_of_turns, 1),
                     f"{round(avg_player_hit_rate, 1)}%",
                     f"{round(avg_computer_hit_rate, 1)}%",
-                    tot_player_wins,
-                    tot_computer_wins,
                 ],
             ],
-            headers=[
-                "",
-                "Number of turns",
-                "Player hit rate",
-                "Computer hit rate",
-                "Total player wins",
-                "Total computer wins",
-            ],
+            headers=["", "Number of turns", "Player hit rate", "Computer hit rate"],
         )
     )
 
