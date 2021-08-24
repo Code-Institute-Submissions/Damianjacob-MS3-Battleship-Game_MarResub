@@ -1,3 +1,5 @@
+# CI-MS3-battleship
+
 - [CI-MS3-battleship](#ci-ms3-battleship)
   * [How to play](#how-to-play)
   * [Technologies used](#technologies-used)
@@ -13,8 +15,6 @@
   * [Acknowledgements](#acknowledgements)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
-# CI-MS3-battleship
 
 See live version of app: https://battleship-strategy.herokuapp.com/
 
