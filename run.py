@@ -1,6 +1,10 @@
 import random
 from tabulate import tabulate
 import gspread
+import sys
+
+sys.path.append("boardclass.py")
+from boardclass import Board
 from google.oauth2.service_account import Credentials
 
 SCOPE = [
@@ -13,30 +17,15 @@ CREDS = Credentials.from_service_account_file("creds.json")
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("Battleship-stats")
-
 stats = SHEET.worksheet("stats")
-
-
-# import sys
-
-# sys.path.append("board-class.py")
-
-# from boardclass.py import Board
-
-existing_rows = len(stats.row_values(1))
-
-existing_columns = len(stats.col_values(1))
-
-print(existing_columns)
-print(existing_rows)
 
 
 def get_game_stats(n_turns, p_hitrate, c_hitrate):
     """
+
     @n_turns
 
     """
-
     turns_column = stats.col_values(1)
     n_of_turns_list = [int(x) for x in turns_column[1:]]
     avg_n_of_turns = sum(n_of_turns_list) / len(n_of_turns_list)
@@ -85,139 +74,6 @@ def get_game_stats(n_turns, p_hitrate, c_hitrate):
     )
 
 
-# get_game_stats(43, 23, 20)
-
-
-class Board:
-    """
-    Creates a board instance for playing the battleship game. Contains methods for displaying the board and placing ships.
-    """
-
-    def __init__(self, name):
-        self.name = name
-        self.board = [
-            [" ", "A", "B", "C", "D", "E"],
-            ["1", "~", "~", "~", "~", "~"],
-            ["2", "~", "~", "~", "~", "~"],
-            ["3", "~", "~", "~", "~", "~"],
-            ["4", "~", "~", "~", "~", "~"],
-            ["5", "~", "~", "~", "~", "~"],
-        ]
-        self.ship_count = 5
-        self.turn_count = 0
-        self.win = 0
-        self.num_of_getting_hit = 5 - self.ship_count
-        self.coordinates_list = [
-            (col, row) for col in range(1, 6) for row in range(1, 6)
-        ]
-
-    def column_number(self, col):
-        """
-        Converts a letter from a to e to a number based on the letter's index in the first nested list inside the board list
-        """
-        return self.board[0].index(col.upper())
-
-    def display_board(self):
-        """
-        Prints the board and the name of its player to the terminal.
-        """
-        print(f"\n   {self.name}'s board:\n")
-        for row in self.board:
-            joint_row = "   ".join(row)
-            print(f"{joint_row}\n")
-
-    def place_ships(self, col, row):
-        """
-        Places ships (represented by "@") at the coordinates specified by the player
-        """
-        if type(col) is str:
-            col_num = self.column_number(col)
-        else:
-            col_num = col
-        self.board[int(row)][col_num] = "@"
-
-    def create_five_random_coordinates(self):
-        """
-        Creates 5 random coordinates without duplicates and returns them in a nested list.
-        """
-        col_list = ["A", "B", "C", "D", "E"]
-        row_list = [1, 2, 3, 4, 5]
-        coordinate_list = []
-        x = 0
-        while x < 5:
-            col = random.choice(col_list)
-            row = random.choice(row_list)
-            col_num = self.column_number(col)
-            rand_coordinates = [row, col_num]
-            if rand_coordinates in coordinate_list:
-                pass
-            else:
-                coordinate_list.append(rand_coordinates)
-                x += 1
-        return coordinate_list
-
-    def guess_computer_ships(self, col, row, coor_list):
-        """
-        Lets the player guess the computer's ship coordinates.
-        """
-        col_num = self.column_number(col)
-        coords = [int(row), col_num]
-        # print(f"coords: {coords}")
-        # print(f"coordinate_list before: {coor_list}")
-        if coords in coor_list:
-            self.board[int(row)][col_num] = "x"
-            coor_list.remove(coords)
-            self.ship_count -= 1
-            if self.ship_count > 1:
-                print(
-                    f"\n---You shot {col.upper()} {row}, it's a hit! We need to sink {self.ship_count} more ships to destroy the enemy's fleet---"
-                )
-            elif self.ship_count == 1:
-                print(
-                    f"\n---You shot {col.upper()} {row}, it's a hit! We only need to sink one more ship to destroy the enemy's fleet!---"
-                )
-        else:
-            print(f"\n---You shot {col.upper()} {row}, it's a miss...---")
-            self.board[int(row)][col_num] = "o"
-        # print(f"coordinate_list after: {coor_list}")
-
-    def guess_player_ships(self):
-        """
-        Pulls a random coordinate from the coordinate_list instance variable, then removes that coordinate
-        from the coordinate_list and changes the corresponding character on the board based on
-        whether that character is an @ or not.
-        """
-        # print(self.coordinates_list)
-        i = len(self.coordinates_list)
-        # print(f"i (length of coordinates list): {i}")
-        rand_index = random.randrange(i)
-        # print(f"rand_index: {rand_index}")
-        rand_coordinate = self.coordinates_list[rand_index]
-        # print(f"rand_coordinate: {rand_coordinate}")
-
-        col, row = rand_coordinate
-        coordinate = self.board[row][col]
-        self.coordinates_list.remove(rand_coordinate)
-        if coordinate == "@":
-            self.board[row][col] = "x"
-            self.ship_count -= 1
-            if self.ship_count > 1:
-                print(
-                    f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][col].upper()} {row}! We still have {self.ship_count} ships in our fleet.---"
-                )
-            else:
-                print(
-                    f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][col].upper()} {row}! We only have {self.ship_count} ship left...---"
-                )
-        else:
-            print(
-                f"\n---The enemy shot {self.board[0][col].upper()} {row}. It's a miss!---"
-            )
-            self.board[row][col] = "o"
-        # print(f"coordinates after while loop inside guess_player_ships: {coordinate}")
-        # print(f"ship_count after loop: {self.ship_count}")
-
-
 def player_turn():
     """
     Prompts the player to insert the coordinates they want to attack. Checks for the coordinates correct length and returns an
@@ -263,7 +119,7 @@ def player_turn():
 
 
 def computer_turn():
-    player_board.guess_player_ships()
+    player_board.guess_player_ships(player_name)
     computer_board.turn_count += 1
 
 
@@ -389,11 +245,36 @@ def game_over():
         computer_board.win += 1
 
 
-def update_stats_spreadsheet(game_stats):
+def update_stats_spreadsheet():
     """
     Updates a google sheet with game stats from the current game
     """
-    stats.append_row(game_stats)
+
+    print("Updating google sheet...")
+    num_of_turns = player_board.turn_count + computer_board.turn_count
+    computer_hit_rate = (
+        player_board.num_of_getting_hit / computer_board.turn_count * 100
+    )
+    player_hit_rate = computer_board.num_of_getting_hit / player_board.turn_count * 100
+
+    print(f"computer hitrate: {computer_hit_rate}")
+    print(
+        f"player num_of_getting_hit: {player_board.num_of_getting_hit} computer turn count: {computer_board.turn_count}"
+    )
+    print(f"player hit rate: {player_hit_rate}")
+    print(
+        f"computer num_of_getting_hit: {computer_board.num_of_getting_hit} player turn count: {player_board.turn_count}"
+    )
+
+    current_game_stats = [
+        num_of_turns,
+        player_board.win,
+        computer_board.win,
+        player_hit_rate,
+        computer_hit_rate,
+    ]
+
+    stats.append_row(current_game_stats)
 
 
 play_game = True
@@ -410,23 +291,7 @@ while play_game == True:
     place_ships()
     start_game()
     game_over()
-
-    # The following piece of code calculates game stats and updates the google sheet where they are stored
-    num_of_turns = player_board.turn_count + computer_board.turn_count
-    computer_hit_rate = (
-        player_board.num_of_getting_hit / computer_board.turn_count * 100
-    )
-    player_hit_rate = computer_board.num_of_getting_hit / player_board.turn_count * 100
-
-    current_game_stats = [
-        num_of_turns,
-        player_board.win,
-        computer_board.win,
-        player_hit_rate,
-        computer_hit_rate,
-    ]
-
-    update_stats_spreadsheet(current_game_stats)
+    update_stats_spreadsheet()
 
     question_answered = False
     while question_answered == False:
