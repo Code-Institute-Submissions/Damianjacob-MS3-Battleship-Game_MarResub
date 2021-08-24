@@ -22,8 +22,11 @@ stats = SHEET.worksheet("stats")
 
 def get_game_stats(n_turns, p_hitrate, c_hitrate):
     """
-
-    @n_turns
+    Takes stats from the "stats" google sheet, calculates averages and displays them to the player
+    comparing them to the player's stats from the current game.
+    @n_turns: number of total turns from the current game
+    @p_hitrate: player hit rate of the current game
+    @c_hitrate: computer hit rate of the current game
 
     """
     turns_column = stats.col_values(1)
@@ -39,11 +42,11 @@ def get_game_stats(n_turns, p_hitrate, c_hitrate):
     tot_computer_wins = sum(computer_wins_list)
 
     player_hit_rate_column = stats.col_values(4)
-    player_hit_rate_list = [int(x) for x in player_hit_rate_column[1:]]
+    player_hit_rate_list = [float(x) for x in player_hit_rate_column[1:]]
     avg_player_hit_rate = sum(player_hit_rate_list) / len(player_hit_rate_list)
 
     computer_hit_rate_column = stats.col_values(5)
-    computer_hit_rate_list = [int(x) for x in computer_hit_rate_column[1:]]
+    computer_hit_rate_list = [float(x) for x in computer_hit_rate_column[1:]]
     avg_computer_hit_rate = sum(computer_hit_rate_list) / len(computer_hit_rate_list)
 
     print(
@@ -52,12 +55,19 @@ def get_game_stats(n_turns, p_hitrate, c_hitrate):
     print(
         tabulate(
             [
-                ["This game", n_turns, p_hitrate, c_hitrate, "-", "-"],
+                [
+                    "This game",
+                    n_turns,
+                    f"{round(p_hitrate, 1)}%",
+                    f"{round(c_hitrate, 1)}%",
+                    "-",
+                    "-",
+                ],
                 [
                     "Average",
                     round(avg_n_of_turns, 1),
-                    round(avg_player_hit_rate, 1),
-                    round(avg_computer_hit_rate, 1),
+                    f"{round(avg_player_hit_rate, 1)}%",
+                    f"{round(avg_computer_hit_rate, 1)}%",
                     tot_player_wins,
                     tot_computer_wins,
                 ],
@@ -106,7 +116,7 @@ def player_turn():
                     == "o"
                 ):
                     print(
-                        f"\n***You already shot {a.upper()} {b}! Please choose another coordinate***"
+                        f"\n***You already shot {a.upper()} {b}! Please choose another coordinate***\n"
                     )
                 else:
                     computer_board.guess_computer_ships(a, b, computer_coordinates)
@@ -119,6 +129,11 @@ def player_turn():
 
 
 def computer_turn():
+    """
+    Guesses a random coordinate to shoot at by executing the
+    guess_player_ships() method of the Board class. Then adds 1 to the
+    turn_count instance variable of the computer_board instance.
+    """
     player_board.guess_player_ships(player_name)
     computer_board.turn_count += 1
 
@@ -141,6 +156,9 @@ If you miss, a "o" will appear on your enemies board, and when you hit an enemy 
 
 
 def show_title_and_instructions():
+    """
+    Displays the title and instructions variables.
+    """
     for row in title:
         print(" ".join(row) + "\n")
     print(instructions)
@@ -199,7 +217,7 @@ def place_ships():
 
 def start_game():
     """
-    Determines who starts the game by flipping a coin. If the player wins, runs a loop with the player_turn and compuyter_turn functions
+    Determines who starts the game randomly. If the player wins, runs a loop with the player_turn and compuyter_turn functions
     while both players still have all of their ships. If at any point the ship_count of one of the players drops to zero, the loop
     stops.
     """
@@ -207,13 +225,8 @@ def start_game():
     if coin_flip == 1:
         print("---You start first. Good luck!---")
         while computer_board.ship_count > 0 and player_board.ship_count > 0:
-
             player_turn()
             if computer_board.ship_count == 0 or player_board.ship_count == 0:
-                print()
-                print(
-                    f"comp ship count:{computer_board.ship_count} player ship count: {player_board.ship_count}"
-                )
                 player_board.display_board()
                 computer_board.display_board()
                 break
@@ -223,20 +236,19 @@ def start_game():
     else:
         print("---Your enemy starts first! You start second. Good luck!---")
         while computer_board.ship_count > 0 and player_board.ship_count > 0:
-
             computer_turn()
             player_board.display_board()
             computer_board.display_board()
             if computer_board.ship_count == 0 or player_board.ship_count == 0:
-                print()
-                print(
-                    f"comp ship count:{computer_board.ship_count} player ship count: {player_board.ship_count}"
-                )
                 break
             player_turn()
 
 
 def game_over():
+    """
+    Displays a message announcing the winner and updates the win instance variable
+    of the player who won.
+    """
     if computer_board.ship_count == 0:
         print("\n---Congratulations, you won!---\n")
         player_board.win += 1
@@ -247,24 +259,16 @@ def game_over():
 
 def update_stats_spreadsheet():
     """
-    Updates a google sheet with game stats from the current game
+    Updates a google sheet with game stats from the current game. Calls the get_game_stats()
+    function.
     """
 
-    print("Updating google sheet...")
+    print("Updating stats...")
     num_of_turns = player_board.turn_count + computer_board.turn_count
     computer_hit_rate = (
         player_board.num_of_getting_hit / computer_board.turn_count * 100
     )
     player_hit_rate = computer_board.num_of_getting_hit / player_board.turn_count * 100
-
-    print(f"computer hitrate: {computer_hit_rate}")
-    print(
-        f"player num_of_getting_hit: {player_board.num_of_getting_hit} computer turn count: {computer_board.turn_count}"
-    )
-    print(f"player hit rate: {player_hit_rate}")
-    print(
-        f"computer num_of_getting_hit: {computer_board.num_of_getting_hit} player turn count: {player_board.turn_count}"
-    )
 
     current_game_stats = [
         num_of_turns,
@@ -274,9 +278,8 @@ def update_stats_spreadsheet():
         computer_hit_rate,
     ]
 
-    get_game_stats(num_of_turns, player_hit_rate, computer_hit_rate)
-
     stats.append_row(current_game_stats)
+    get_game_stats(num_of_turns, player_hit_rate, computer_hit_rate)
 
 
 play_game = True

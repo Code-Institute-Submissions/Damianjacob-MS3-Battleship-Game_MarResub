@@ -19,7 +19,7 @@ class Board:
         self.ship_count = 5
         self.turn_count = 0
         self.win = 0
-        self.num_of_getting_hit = 5
+        self.num_of_getting_hit = 0
         self.coordinates_list = [
             (col, row) for col in range(1, 6) for row in range(1, 6)
         ]
@@ -75,8 +75,6 @@ class Board:
         """
         col_num = self.column_number(col)
         coords = [int(row), col_num]
-        # print(f"coords: {coords}")
-        # print(f"coordinate_list before: {coor_list}")
         if coords in coor_list:
             self.board[int(row)][col_num] = "x"
             coor_list.remove(coords)
@@ -93,7 +91,6 @@ class Board:
         else:
             print(f"\n---You shot {col.upper()} {row}, it's a miss...---")
             self.board[int(row)][col_num] = "o"
-        # print(f"coordinate_list after: {coor_list}")
 
     def guess_player_ships(self, player_name):
         """
@@ -101,13 +98,9 @@ class Board:
         from the coordinate_list and changes the corresponding character on the board based on
         whether that character is an @ or not.
         """
-        # print(self.coordinates_list)
         i = len(self.coordinates_list)
-        # print(f"i (length of coordinates list): {i}")
         rand_index = random.randrange(i)
-        # print(f"rand_index: {rand_index}")
         rand_coordinate = self.coordinates_list[rand_index]
-        # print(f"rand_coordinate: {rand_coordinate}")
 
         col, row = rand_coordinate
         coordinate = self.board[row][col]
@@ -120,14 +113,16 @@ class Board:
                 print(
                     f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][col].upper()} {row}! We still have {self.ship_count} ships in our fleet.---"
                 )
-            else:
+            elif self.ship_count == 1:
                 print(
                     f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][col].upper()} {row}! We only have {self.ship_count} ship left...---"
+                )
+            else:
+                print(
+                    f"\n---{player_name}! The enemy has sunken our last ship at {self.board[0][col].upper()} {row}! We are defeated!---"
                 )
         else:
             print(
                 f"\n---The enemy shot {self.board[0][col].upper()} {row}. It's a miss!---"
             )
             self.board[row][col] = "o"
-        # print(f"coordinates after while loop inside guess_player_ships: {coordinate}")
-        # print(f"ship_count after loop: {self.ship_count}")
