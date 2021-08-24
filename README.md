@@ -1,16 +1,26 @@
-
-
-# CI-MS3-battleship
+- [CI-MS3-battleship](#ci-ms3-battleship)
+  * [How to play](#how-to-play)
+  * [Technologies used](#technologies-used)
+  * [Features](#features)
+    + [Existing features](#existing-features)
+  * [Testing](#testing)
+    + [PEP8](#pep8)
+    + [Fixed errors](#fixed-errors)
+  * [Bugs](#bugs)
+  * [Deployment](#deployment)
+  * [Credit](#credit)
+    + [Content](#content)
+  * [Acknowledgements](#acknowledgements)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
-See live version of site: https://damianjacob.github.io/CI-MS2-fun-Quiz/
+# CI-MS3-battleship
 
-<img src='docs/amiresponsive.png' alt='Am i responsive screenshot'>
+See live version of app: https://battleship-strategy.herokuapp.com/
 
 The goal of this project is to create an interactive battleship game in a Python terminal that stores certain information about each game in a separate Google sheet.
 
-##How to play
+## How to play
 
 In this game you will have to fight against the computer in a classical battleship game. 
 First of all, the game will ask you to insert your name. You can then choose whether you'd like to place your ships on the board of if you'd like them to be placed on the board randomly. The board consists of a 5x5 square, with coordinates for each field: a letter from A to E for columns and a number from 1 to 5 for rows.
@@ -60,7 +70,7 @@ Game stats table:
 
 <details>
 <summary>Screenshot replay question</summary>
-<img src='features/images/features-replay.png' alt='replay question screenshot'>
+<img src='features/images/feature-replay.png' alt='replay question screenshot'>
 </details>
 
 Game messages: 
