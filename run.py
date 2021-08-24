@@ -20,70 +20,6 @@ SHEET = GSPREAD_CLIENT.open("Battleship-stats")
 stats = SHEET.worksheet("stats")
 
 
-def get_game_stats(n_turns, p_hitrate, c_hitrate):
-    """
-    Takes stats from the "stats" google sheet, calculates averages and displays them to the player
-    comparing them to the player's stats from the current game.
-    @n_turns: number of total turns from the current game
-    @p_hitrate: player hit rate of the current game
-    @c_hitrate: computer hit rate of the current game
-
-    """
-    turns_column = stats.col_values(1)
-    n_of_turns_list = [int(x) for x in turns_column[1:]]
-    avg_n_of_turns = sum(n_of_turns_list) / len(n_of_turns_list)
-
-    player_wins_column = stats.col_values(2)
-    player_wins_list = [int(x) for x in player_wins_column[1:]]
-    tot_player_wins = sum(player_wins_list)
-
-    computer_wins_column = stats.col_values(3)
-    computer_wins_list = [int(x) for x in computer_wins_column[1:]]
-    tot_computer_wins = sum(computer_wins_list)
-
-    player_hit_rate_column = stats.col_values(4)
-    player_hit_rate_list = [float(x) for x in player_hit_rate_column[1:]]
-    avg_player_hit_rate = sum(player_hit_rate_list) / len(player_hit_rate_list)
-
-    computer_hit_rate_column = stats.col_values(5)
-    computer_hit_rate_list = [float(x) for x in computer_hit_rate_column[1:]]
-    avg_computer_hit_rate = sum(computer_hit_rate_list) / len(computer_hit_rate_list)
-
-    print(
-        "\nBelow you can see your stats compared to the average stats of people who played this game previously\n"
-    )
-    print(
-        tabulate(
-            [
-                [
-                    "This game",
-                    n_turns,
-                    f"{round(p_hitrate, 1)}%",
-                    f"{round(c_hitrate, 1)}%",
-                    "-",
-                    "-",
-                ],
-                [
-                    "Average",
-                    round(avg_n_of_turns, 1),
-                    f"{round(avg_player_hit_rate, 1)}%",
-                    f"{round(avg_computer_hit_rate, 1)}%",
-                    tot_player_wins,
-                    tot_computer_wins,
-                ],
-            ],
-            headers=[
-                "",
-                "Number of turns",
-                "Player hit rate",
-                "Computer hit rate",
-                "Total player wins",
-                "Total computer wins",
-            ],
-        )
-    )
-
-
 def player_turn():
     """
     Prompts the player to insert the coordinates they want to attack. Checks for the coordinates correct length and returns an
@@ -111,9 +47,9 @@ def player_turn():
             try:
                 a, b = coordinates.split()
                 if (
-                    computer_board.board[int(b)][computer_board.column_number(a)] == "x"
+                    computer_board.board[int(b)][computer_board.column_number(a)] == "X"
                     or computer_board.board[int(b)][computer_board.column_number(a)]
-                    == "o"
+                    == "O"
                 ):
                     print(
                         f"\n***You already shot {a.upper()} {b}! Please choose another coordinate***\n"
@@ -151,7 +87,7 @@ but not yours.
 
 First, you will have to enter your name, then you have to place your own ships by entering coordinates. Place your ships wisely!
 Once your ships are placed, you and the computer will take turns to shoot at coordinates of each other's boards. Whoever manages to sink the enemy fleet first, wins!
-If you miss, a "o" will appear on your enemies board, and when you hit an enemy ship an "x" will appear. You can't shoot the same coordinates twice! Good luck!
+If you miss, a "O" will appear on your enemies board, and when you hit an enemy ship an "X" will appear. You can't shoot the same coordinates twice! Good luck!
 """
 
 
@@ -257,12 +193,75 @@ def game_over():
         computer_board.win += 1
 
 
+def get_game_stats(n_turns, p_hitrate, c_hitrate):
+    """
+    Takes stats from the "stats" google sheet, calculates averages and displays them to the player
+    comparing them to the player's stats from the current game.
+    @n_turns: number of total turns from the current game
+    @p_hitrate: player hit rate of the current game
+    @c_hitrate: computer hit rate of the current game
+
+    """
+    turns_column = stats.col_values(1)
+    n_of_turns_list = [int(x) for x in turns_column[1:]]
+    avg_n_of_turns = sum(n_of_turns_list) / len(n_of_turns_list)
+
+    player_wins_column = stats.col_values(2)
+    player_wins_list = [int(x) for x in player_wins_column[1:]]
+    tot_player_wins = sum(player_wins_list)
+
+    computer_wins_column = stats.col_values(3)
+    computer_wins_list = [int(x) for x in computer_wins_column[1:]]
+    tot_computer_wins = sum(computer_wins_list)
+
+    player_hit_rate_column = stats.col_values(4)
+    player_hit_rate_list = [float(x) for x in player_hit_rate_column[1:]]
+    avg_player_hit_rate = sum(player_hit_rate_list) / len(player_hit_rate_list)
+
+    computer_hit_rate_column = stats.col_values(5)
+    computer_hit_rate_list = [float(x) for x in computer_hit_rate_column[1:]]
+    avg_computer_hit_rate = sum(computer_hit_rate_list) / len(computer_hit_rate_list)
+
+    print(
+        "\nBelow you can see your stats compared to the average stats of people who played this game previously\n"
+    )
+    print(
+        tabulate(
+            [
+                [
+                    "This game",
+                    n_turns,
+                    f"{round(p_hitrate, 1)}%",
+                    f"{round(c_hitrate, 1)}%",
+                    "-",
+                    "-",
+                ],
+                [
+                    "Average",
+                    round(avg_n_of_turns, 1),
+                    f"{round(avg_player_hit_rate, 1)}%",
+                    f"{round(avg_computer_hit_rate, 1)}%",
+                    tot_player_wins,
+                    tot_computer_wins,
+                ],
+            ],
+            headers=[
+                "",
+                "Number of turns",
+                "Player hit rate",
+                "Computer hit rate",
+                "Total player wins",
+                "Total computer wins",
+            ],
+        )
+    )
+
+
 def update_stats_spreadsheet():
     """
     Updates a google sheet with game stats from the current game. Calls the get_game_stats()
     function.
     """
-
     print("Updating stats...")
     num_of_turns = player_board.turn_count + computer_board.turn_count
     computer_hit_rate = (

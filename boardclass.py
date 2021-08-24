@@ -76,7 +76,7 @@ class Board:
         col_num = self.column_number(col)
         coords = [int(row), col_num]
         if coords in coor_list:
-            self.board[int(row)][col_num] = "x"
+            self.board[int(row)][col_num] = "X"
             coor_list.remove(coords)
             self.ship_count -= 1
             self.num_of_getting_hit += 1
@@ -90,7 +90,7 @@ class Board:
                 )
         else:
             print(f"\n---You shot {col.upper()} {row}, it's a miss...---")
-            self.board[int(row)][col_num] = "o"
+            self.board[int(row)][col_num] = "O"
 
     def guess_player_ships(self, player_name):
         """
@@ -106,7 +106,7 @@ class Board:
         coordinate = self.board[row][col]
         self.coordinates_list.remove(rand_coordinate)
         if coordinate == "@":
-            self.board[row][col] = "x"
+            self.board[row][col] = "X"
             self.ship_count -= 1
             self.num_of_getting_hit += 1
             if self.ship_count > 1:
@@ -125,4 +125,4 @@ class Board:
             print(
                 f"\n---The enemy shot {self.board[0][col].upper()} {row}. It's a miss!---"
             )
-            self.board[row][col] = "o"
+            self.board[row][col] = "O"
