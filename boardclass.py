@@ -19,7 +19,7 @@ class Board:
         self.ship_count = 5
         self.turn_count = 0
         self.win = 0
-        self.num_of_getting_hit = 5 - self.ship_count
+        self.num_of_getting_hit = 5
         self.coordinates_list = [
             (col, row) for col in range(1, 6) for row in range(1, 6)
         ]
@@ -81,6 +81,7 @@ class Board:
             self.board[int(row)][col_num] = "x"
             coor_list.remove(coords)
             self.ship_count -= 1
+            self.num_of_getting_hit += 1
             if self.ship_count > 1:
                 print(
                     f"\n---You shot {col.upper()} {row}, it's a hit! We need to sink {self.ship_count} more ships to destroy the enemy's fleet---"
@@ -114,6 +115,7 @@ class Board:
         if coordinate == "@":
             self.board[row][col] = "x"
             self.ship_count -= 1
+            self.num_of_getting_hit += 1
             if self.ship_count > 1:
                 print(
                     f"\n---{player_name}! The enemy has sunken our ship at {self.board[0][col].upper()} {row}! We still have {self.ship_count} ships in our fleet.---"

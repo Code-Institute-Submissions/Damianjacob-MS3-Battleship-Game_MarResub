@@ -55,9 +55,9 @@ def get_game_stats(n_turns, p_hitrate, c_hitrate):
                 ["This game", n_turns, p_hitrate, c_hitrate, "-", "-"],
                 [
                     "Average",
-                    avg_n_of_turns,
-                    avg_player_hit_rate,
-                    avg_computer_hit_rate,
+                    round(avg_n_of_turns, 1),
+                    round(avg_player_hit_rate, 1),
+                    round(avg_computer_hit_rate, 1),
                     tot_player_wins,
                     tot_computer_wins,
                 ],
@@ -274,6 +274,8 @@ def update_stats_spreadsheet():
         computer_hit_rate,
     ]
 
+    get_game_stats(num_of_turns, player_hit_rate, computer_hit_rate)
+
     stats.append_row(current_game_stats)
 
 
@@ -296,14 +298,12 @@ while play_game == True:
     question_answered = False
     while question_answered == False:
         user_answer = input(
-            "Would you like to play another game? insert 'y' for yes and 'n' for no, insert 's' to see your game stats: "
+            "\nWould you like to play another game? insert 'y' for yes and 'n' for no: "
         )
         if user_answer.lower().strip() == "y":
             question_answered = True
         elif user_answer.lower().strip() == "n":
             play_game = False
             question_answered = True
-        elif user_answer.lower().strip() == "s":
-            pass
         else:
             print("***Invalid input, please type either y or n***")
