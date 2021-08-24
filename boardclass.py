@@ -87,15 +87,15 @@ class Board:
             self.num_of_getting_hit += 1
             if self.ship_count > 1:
                 print(
-                    f"""\n---You shot {col.upper()} {row}, it's a hit! We
-                    need to sink {self.ship_count} more ships to
-                    destroy the enemy's fleet---"""
+                    f"\n---You shot {col.upper()} {row}, it's a hit! We "
+                    f"need to sink {self.ship_count} more ships to "
+                    f"destroy the enemy's fleet---"
                 )
             elif self.ship_count == 1:
                 print(
-                    f"""\n---You shot {col.upper()} {row}, it's a hit!
-                    We only need to sink one more ship to destroy the
-                    enemy's fleet!---"""
+                    f"\n---You shot {col.upper()} {row}, it's a hit! "
+                    "We only need to sink one more ship to destroy the "
+                    "enemy's fleet!---"
                 )
         else:
             print(f"\n---You shot {col.upper()} {row}, it's a miss...---")
@@ -122,25 +122,25 @@ class Board:
             self.num_of_getting_hit += 1
             if self.ship_count > 1:
                 print(
-                    f"""\n---{player_name}! The enemy has sunken our ship at
-                    {self.board[0][col].upper()} {row}!
-                    We still have {self.ship_count} ships in our fleet.---"""
+                    f"\n---{player_name}! The enemy has sunken our ship at "
+                    f"{self.board[0][col].upper()} {row}!\n"
+                    f"We still have {self.ship_count} ships in our fleet.---"
                 )
             elif self.ship_count == 1:
                 print(
-                    f"""\n---{player_name}! The enemy has sunken our ship at
-                    {self.board[0][col].upper()} {row}!
-                    We only have {self.ship_count} ship left...---"""
+                    f"\n---{player_name}! The enemy has sunken our ship at "
+                    f"{self.board[0][col].upper()} {row}!\n"
+                    f"We only have {self.ship_count} ship left...---"
                 )
             else:
                 print(
-                    f"""\n---{player_name}! The enemy has sunken our last ship
-                    at {self.board[0][col].upper()} {row}!
-                    We are defeated!---"""
+                    f"\n---{player_name}! The enemy has sunken our last ship "
+                    f"at {self.board[0][col].upper()} {row}!\n"
+                    "We are defeated!---"
                 )
         else:
             print(
-                f"""\n---The enemy shot {self.board[0][col].upper()}
-                {row}. It's a miss!---"""
+                "\n---The enemy shot "
+                f"{self.board[0][col].upper()} {row}. It's a miss!---"
             )
             self.board[row][col] = "O"

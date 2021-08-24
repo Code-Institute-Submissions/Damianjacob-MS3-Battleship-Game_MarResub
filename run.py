@@ -36,20 +36,20 @@ def player_turn():
     flag = True
     while flag:
         coordinates = input(
-            """Which coordinates do you want to shoot?\nThe coordinates should
-            be the column letter and the row number, separated by a space
-            (like this: A 1): """
+            "Which coordinates do you want to shoot? The coordinates should\n"
+            "be the column letter and the row number, separated by a space "
+            "(like this: A 1): "
         )
         if len(coordinates) > 3:
             print(
-                """\n***Attention! Your input is too long. It should only
-                contain a letter, a space and a number.***\n"""
+                "\n***Attention! Your input is too long. It should only "
+                "contain a letter, a space and a number.***\n"
             )
             continue
         elif len(coordinates) < 3:
             print(
-                """\n***Attention! Your input is too short. It should only
-                contain a letter, a space and a number.***\n"""
+                "\n***Attention! Your input is too short. It should only "
+                "contain a letter, a space and a number.***\n"
             )
             continue
         else:
@@ -61,8 +61,8 @@ def player_turn():
                     or computer_board.board[int(b)][a_num] == "O"
                 ):
                     print(
-                        f"""\n***You already shot {a.upper()} {b}!
-                        Please choose another coordinate***\n"""
+                        f"\n***You already shot {a.upper()} {b}! "
+                        "Please choose another coordinate***\n"
                     )
                 else:
                     computer_board.guess_computer_ships(a, b, computer_coords)
@@ -70,9 +70,9 @@ def player_turn():
                     flag = False
             except ValueError:
                 print(
-                    """\n***Attention! Your coordinates should be a letter
-                    from A to E and a number from 1 to 5, separated by a space.
-                    The letter should come before the number.***\n"""
+                    "\n***Attention! Your coordinates should be a letter "
+                    "from A to E and a number from 1 to 5, separated by a "
+                    "space.\nThe letter should come before the number.***\n"
                 )
 
 
@@ -92,7 +92,7 @@ title = [
     [" *", "-", "-", "-", "-", "-", "*", "-", "-", "-", "-", "*"],
 ]
 
-instructions = """Hello and welcome to this game of battleship! \nLet me
+instructions = """Hello and welcome to this game of battleship! Let me
 explain how it works: You will have to face the computer in this strategic
 naval game, and each of you will try to sink each other's fleet.
 You each have 5 ships, placed strategically on your board.
@@ -136,10 +136,10 @@ def place_ships():
     ships_placed = False
     while ships_placed is False:
         ship_placement = input(
-            """You can either choose the coordinates of your ships yourself or
-            you can have your ships placed randomly on the board.\nDo you want
-            to choose the coordinates yourself?
-            Type 'y' for yes or 'n' for no: """
+            "You can either choose the coordinates of your ships yourself or "
+            "you can have your ships placed randomly on the board.\nDo you want "
+            "to choose the coordinates yourself? "
+            "Type 'y' for yes or 'n' for no: "
         )
         if ship_placement.lower() == "n":
             coordinates = player_board.create_five_random_coordinates()
@@ -152,19 +152,19 @@ def place_ships():
             i = 0
             while i < 5:
                 player_coordinates = input(
-                    f"""Please insert the coordinates where you want to place
-                    ship number {i + 1}.\nThe coordinates should be the column
-                    letter and the row number, separated by a space
-                    (like this: A 1): """
+                    "\nPlease insert the coordinates where you want to place "
+                    f"ship number {i + 1}.\nThe coordinates should be the "
+                    " column letter and the row number, separated by a space "
+                    "(like this: A 1): "
                 )
                 try:
                     a, b = player_coordinates.split()
                     a_num = player_board.column_number(a)
                     if player_board.board[int(b)][a_num] == "@":
                         print(
-                            """\n***You already have placed a ship at this
-                            coordinate! Please choose another
-                            coordinate.***\n"""
+                            "\n***You already have placed a ship at this "
+                            "coordinate! Please choose another "
+                            "coordinate.***\n"
                         )
                     else:
                         player_board.place_ships(a, b)
@@ -172,16 +172,16 @@ def place_ships():
                         player_board.display_board()
                 except ValueError:
                     print(
-                        """***Your coordinates have to be exactly two
-                        characters, should be separated by a space and the
-                        letter should come before the number. Please insert
-                        them again!***"""
+                        "\n***Your coordinates have to be exactly two "
+                        "characters, should be separated by a space and the "
+                        "letter should come before the number.\nPlease insert "
+                        "them again!***"
                     )
             ships_placed = True
         else:
             print(
-                """***Input not valid, please insert either y or n without
-                any space and then press enter***"""
+                "\n***Input not valid, please insert either y or n without "
+                "any space and then press enter***"
             )
     computer_board.display_board()
 
@@ -259,8 +259,8 @@ def get_game_stats(n_turns, p_hitrate, c_hitrate):
     avg_computer_hit_rate = sum(computer_hr_list) / len(computer_hr_list)
 
     print(
-        """\nBelow you can see your stats compared to the average stats of
-        people who played this game previously\n"""
+        "\nBelow you can see your stats compared to the average stats of "
+        "people who played this game previously\n"
     )
     print(
         tabulate(
@@ -338,8 +338,8 @@ while play_game:
     question_answered = False
     while question_answered is False:
         user_answer = input(
-            """\nWould you like to play another game?
-            Insert 'y' for yes and 'n' for no: """
+            "\nWould you like to play another game? "
+            "Insert 'y' for yes and 'n' for no: "
         )
         if user_answer.lower().strip() == "y":
             question_answered = True
