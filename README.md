@@ -100,7 +100,8 @@ No errors were returned when passing through the official PEP8 validator
 
 ### Fixed errors
 - I fixed the line lenghts, which was the most frequent error. After fixing that, i had to reformat some of the strings that are printed to the terminal.
-- I deleted some whitespaces
+- I deleted some whitespaces.
+- I fixed PEP8 Warning W503: Line break occurred before a binary operator. I moved the binary operator back and set the line break after the operator, which improved readability.
 
 ## Bugs
 
