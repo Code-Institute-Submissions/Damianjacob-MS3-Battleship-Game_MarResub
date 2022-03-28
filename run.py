@@ -57,8 +57,8 @@ def player_turn():
                 a, b = coordinates.split()
                 a_num = computer_board.column_number(a)
                 if (
-                    computer_board.board[int(b)][a_num] == "X"
-                    or computer_board.board[int(b)][a_num] == "O"
+                    computer_board.board[int(b)][a_num] == "X" or
+                    computer_board.board[int(b)][a_num] == "O"
                 ):
                     print(
                         f"\n***You already shot {a.upper()} {b}! "
@@ -135,9 +135,9 @@ def place_ships():
     ships_placed = False
     while ships_placed is False:
         ship_placement = input(
-            "You can either choose the coordinates of your ships yourself or "
-            "you can have your ships placed randomly on the board.\nDo you want "
-            "to choose the coordinates yourself? "
+            "You can either choose the coordinates of your ships yourself "
+            "or you can have your ships placed randomly on the board.\n"
+            "Do you want to choose the coordinates yourself? "
             "Type 'y' for yes or 'n' for no:\n"
         )
         if ship_placement.lower() == "n":
@@ -269,7 +269,12 @@ def get_game_stats(n_turns, p_hitrate, c_hitrate):
                     f"{round(avg_computer_hit_rate, 1)}%",
                 ],
             ],
-            headers=["", "Number of turns", "Player hit rate", "Computer hit rate"],
+            headers=[
+                "",
+                "Number of turns",
+                "Player hit rate",
+                "Computer hit rate"
+            ],
         )
     )
 
